@@ -29,7 +29,7 @@ jobs:
       - name: Add Android platform
         run: npx cap add android
 
-      - name: Patch Android manifest, icon, sounds and settings plugin
+      - name: Patch Android manifest (notification + exact alarm permissions)
         run: node scripts/patch-android.js
 
       - name: Sync web assets
@@ -45,11 +45,11 @@ jobs:
           name: limit-bell-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Publish release
+      - name: Publish release (easy download on phone)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cp android/app/build/outputs/apk/debug/app-debug.apk LimitBell.apk
           gh release create "v${{ github.run_number }}" LimitBell.apk \
             --title "Limit Bell build ${{ github.run_number }}" \
-            --notes "Android APK"
+            --notes "Android APK. Download LimitBell.apk and install."
