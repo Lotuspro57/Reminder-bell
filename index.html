@@ -3,545 +3,1699 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0E1014" id="themeMeta">
+<meta name="theme-color" content="#0B0D11" id="themeMeta">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Limit Bell</title>
 <style>
-:root{--bg:#0E1014;--sf:#171A21;--sf2:#1F232B;--ln:#2A2F39;--tx:#EEF0F4;--mu:#A0A7B4;--ac:#F08A5D;--acT:#1A0F0A;--ok:#7BE0A0;--okBg:#1E3B2A;--wt:#F2C25E;--wtBg:#3D3017;--wk:#5CC8D7;--wkBg:#14343A;--bad:#FF8A80;--nav:#12151A;color-scheme:dark}
-:root[data-theme=light]{--bg:#F4F5F7;--sf:#FFFFFF;--sf2:#EEF0F4;--ln:#DDE1E8;--tx:#14171C;--mu:#5B6370;--ac:#C2501F;--acT:#FFFFFF;--ok:#1E7A45;--okBg:#DDF3E5;--wt:#8A5A00;--wtBg:#FBEBC8;--wk:#0E6B78;--wkBg:#D5EEF2;--bad:#C0392B;--nav:#FFFFFF;color-scheme:light}
+:root{
+  --bg:#0B0D11;--bg2:#0F1217;--sf:#161A21;--sf2:#1C212A;--sf3:#242A35;
+  --ln:#282E39;--ln2:#39404D;
+  --tx:#EDF0F5;--mu:#98A1B1;--mu2:#707A8B;
+  --ac:#F08A5D;--acT:#1A0F0A;--acS:rgba(240,138,93,.14);
+  --ok:#63DFA0;--okS:rgba(99,223,160,.13);
+  --wt:#F3C463;--wtS:rgba(243,196,99,.13);
+  --wk:#63C9D9;--wkS:rgba(99,201,217,.13);
+  --bad:#FF8B81;--badS:rgba(255,139,129,.13);
+  --nav:rgba(13,16,21,.88);
+  --sh:0 18px 44px -22px rgba(0,0,0,.9);
+  --r:18px;
+  color-scheme:dark;
+}
+:root[data-theme=light]{
+  --bg:#F2F4F8;--bg2:#FFFFFF;--sf:#FFFFFF;--sf2:#F1F3F8;--sf3:#E7EAF1;
+  --ln:#E1E5EE;--ln2:#CBD2DE;
+  --tx:#101318;--mu:#5C6472;--mu2:#8B93A2;
+  --acS:rgba(194,80,31,.10);
+  --ok:#12804A;--okS:rgba(18,128,74,.10);
+  --wt:#8A5A00;--wtS:rgba(138,90,0,.10);
+  --wk:#0B6C79;--wkS:rgba(11,108,121,.10);
+  --bad:#C0392B;--badS:rgba(192,57,43,.10);
+  --nav:rgba(255,255,255,.92);
+  --sh:0 18px 44px -26px rgba(15,23,42,.30);
+  color-scheme:light;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px}
+body{
+  margin:0;background:var(--bg);color:var(--tx);overflow:hidden;
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;
+}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
-button:active,.tap:active{opacity:.7}
-input{font:inherit;color:var(--tx)}
-#app{display:flex;flex-direction:column;height:100dvh;max-width:560px;margin-inline:auto}
-#view{flex:1;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 14px) 14px 14px;display:flex;flex-direction:column;gap:12px}
-h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.01em}
-h2{margin:0;font-size:14px;font-weight:600}
-.cap{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--mu);text-transform:uppercase}
+input,textarea{font:inherit;color:var(--tx)}
+h1,h2,h3,p,figure{margin:0}
+h1{font-size:25px;font-weight:800;letter-spacing:-.025em}
+h2{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ic.sm{width:18px;height:18px}
 .mu{color:var(--mu)}
 .num{font-variant-numeric:tabular-nums}
+.cap{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mu2)}
 .row{display:flex;align-items:center;gap:10px}
 .between{justify-content:space-between}
 .sp{flex:1;min-width:0}
+.center{text-align:center}
 
-/* nav */
-nav{display:flex;border-top:1px solid var(--ln);background:var(--nav);padding:4px 8px calc(env(safe-area-inset-bottom) + 6px)}
-nav button{flex:1;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:500;color:var(--mu)}
-nav button.on{color:var(--ac);font-weight:700}
-nav svg,.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ---------- shell ---------- */
+#app{display:flex;flex-direction:column;height:100dvh;max-width:520px;margin-inline:auto;position:relative}
+#view{
+  flex:1;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;
+  padding:calc(env(safe-area-inset-top) + 16px) 16px 20px;
+  display:flex;flex-direction:column;gap:16px;
+}
+nav{
+  display:flex;gap:4px;padding:6px 10px calc(env(safe-area-inset-bottom) + 6px);
+  background:var(--nav);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid var(--ln);z-index:10;
+}
+nav button{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  min-height:52px;border-radius:15px;font-size:10.5px;font-weight:650;color:var(--mu);
+  transition:background .18s,color .18s,transform .12s;
+}
+nav button:active{transform:scale(.96)}
+nav button.on{color:var(--ac);background:var(--acS)}
 
-/* cards */
-.card{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:12px 14px}
-.acc{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:10px 12px 11px;cursor:pointer;display:block;width:100%;text-align:left}
-.chip{flex:none;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#0E1014}
-.pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--sf2);color:var(--mu)}
-.pill.wait{background:var(--wtBg);color:var(--wt)}
-.pill.ready{background:var(--okBg);color:var(--ok)}
-.pill.work{background:var(--wkBg);color:var(--wk)}
-.big{font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.15}
-.hero .big{font-size:34px;line-height:1}
-.bar{height:5px;border-radius:3px;background:var(--ln);margin-top:8px;overflow:hidden}
-.bar i{display:block;height:100%;border-radius:3px}
-.btn{min-height:38px;padding:0 13px;border-radius:10px;background:var(--sf2);border:1px solid var(--ln);font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.btn.pri{background:var(--ac);border-color:var(--ac);color:var(--acT)}
-.btn.big2{min-height:48px;width:100%;border-radius:14px;font-size:15px}
-.fab{width:42px;height:42px;border-radius:21px;background:var(--ac);color:var(--acT);display:flex;align-items:center;justify-content:center}
-.fab .ic{stroke-width:2.4}
-.seg{display:grid;gap:8px}
-.opt{min-height:40px;border-radius:12px;background:var(--sf2);border:1px solid var(--ln);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
-.opt.on{background:var(--ac);border-color:var(--ac);color:var(--acT)}
-.who{min-height:68px;border-radius:14px;background:var(--sf);border:1px solid var(--ln);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px 4px;font-size:11px;font-weight:600}
-.who.on{border:2px solid var(--ac)}
-.list{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:0 12px}
-.li{display:flex;align-items:center;gap:10px;min-height:46px;border-bottom:1px solid var(--ln)}
-.li:last-child{border-bottom:0}
-.sub{display:block;font-size:12px;color:var(--mu);margin-top:2px}
-.tg{width:40px;height:24px;border-radius:12px;background:var(--ln);padding:3px;display:flex;align-items:center;flex:none}
-.tg i{width:18px;height:18px;border-radius:9px;background:var(--tx);display:block}
+/* ---------- primitives ---------- */
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:16px}
+.vhead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.btn{
+  min-height:38px;padding:0 14px;border-radius:11px;background:var(--sf2);border:1px solid var(--ln);
+  font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  transition:transform .12s,background .18s,opacity .18s;
+}
+.btn:active{transform:scale(.96)}
+.btn.pri{background:var(--ac);border-color:transparent;color:var(--acT)}
+.btn.danger{background:var(--bad);border-color:transparent;color:#fff}
+.btn.ghost{background:transparent}
+.btn.sm{min-height:32px;padding:0 12px;font-size:12px;border-radius:10px}
+.btn.wide{width:100%;min-height:50px;border-radius:15px;font-size:15px}
+.fab{
+  width:48px;height:48px;border-radius:26px;background:var(--ac);color:var(--acT);flex:none;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px -8px var(--ac);
+  transition:transform .14s;
+}
+.fab:active{transform:scale(.92)}
+.fab .ic{stroke-width:2.5;width:24px;height:24px}
+
+.chip{
+  flex:none;width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;color:#0B0D11;
+}
+.pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--sf2);color:var(--mu);white-space:nowrap}
+.pill.wait{background:var(--wtS);color:var(--wt)}
+.pill.ready{background:var(--okS);color:var(--ok)}
+.pill.work{background:var(--wkS);color:var(--wk)}
+.big{font-size:22px;font-weight:750;letter-spacing:-.015em;font-variant-numeric:tabular-nums;line-height:1.1}
+.bar{height:6px;border-radius:99px;background:var(--ln);overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;border-radius:99px;transition:width .55s linear}
+.sub{font-size:12px;color:var(--mu);margin-top:1px}
+
+.list{background:var(--sf);border:1px solid var(--ln);border-radius:16px;overflow:hidden}
+.li{display:flex;align-items:center;gap:11px;padding:11px 14px;border-top:1px solid var(--ln);min-height:52px}
+.li:first-child{border-top:0}
+.li .t{font-weight:650;font-size:14px}
+.li.tap{cursor:pointer}
+.li.tap:active{background:var(--sf2)}
+
+.tg{width:44px;height:26px;border-radius:99px;background:var(--ln);padding:3px;display:flex;align-items:center;flex:none;transition:background .2s}
+.tg i{width:20px;height:20px;border-radius:99px;background:var(--tx);display:block;transition:transform .22s cubic-bezier(.3,1.4,.5,1)}
 .tg.on{background:var(--ac);justify-content:flex-end}
 .tg.on i{background:var(--acT)}
-.fchips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
-.fchip{flex:none;min-height:36px;padding:0 14px;border-radius:18px;background:var(--sf);border:1px solid var(--ln);font-size:13px;font-weight:600}
-.fchip.on{background:var(--ac);border-color:var(--ac);color:var(--acT)}
-.field{width:100%;min-height:44px;background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:0 12px;outline:none}
-.field:focus{border-color:var(--ac)}
+
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:4px}
+.seg2 button{min-height:38px;border-radius:10px;font-size:13px;font-weight:700;color:var(--mu);transition:background .18s,color .18s}
+.seg2 button.on{background:var(--ac);color:var(--acT)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.opt{
+  min-height:42px;border-radius:12px;background:var(--sf2);border:1px solid var(--ln);
+  display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:700;
+  transition:background .16s,border-color .16s,color .16s,transform .1s;
+}
+.opt:active{transform:scale(.96)}
+.opt.on{background:var(--ac);border-color:transparent;color:var(--acT)}
+
+.field{
+  width:100%;min-height:46px;background:var(--sf2);border:1px solid var(--ln);border-radius:13px;
+  padding:0 13px;outline:none;transition:border-color .18s,background .18s;
+}
+.field:focus{border-color:var(--ac);background:var(--sf)}
+textarea.field{padding:11px 13px;min-height:104px;resize:vertical;line-height:1.5}
 input[type=time].field{color-scheme:inherit}
-.name{background:transparent;border:0;outline:none;width:100%;min-height:44px;font-size:15px}
-.stat{font-size:20px;font-weight:700;line-height:1.1}
-.days{display:flex;align-items:flex-end;gap:6px;height:42px}
-.days div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;font-size:11px;color:var(--mu)}
-.days i{display:block;width:100%;border-radius:4px;background:var(--ln)}
-.days i.today{background:var(--ac)}
-.srow{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:9px 4px 9px 12px;display:flex;gap:10px;align-items:flex-start}
-.del{flex:none;width:40px;height:40px;margin:-6px 0;display:flex;align-items:center;justify-content:center;color:var(--mu);border-radius:12px}
+::placeholder{color:var(--mu2)}
+
+.swatch{width:34px;height:34px;border-radius:12px;background:var(--sw);border:2px solid transparent;transition:transform .12s}
+.swatch.on{border-color:var(--tx);transform:scale(1.08)}
+.sw{width:30px;height:30px;border-radius:10px;background:var(--sw);border:2px solid transparent}
+.sw.on{border-color:var(--tx);transform:scale(1.1)}
+
+.stat{font-size:21px;font-weight:780;letter-spacing:-.02em;line-height:1.15;font-variant-numeric:tabular-nums}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.statgrid>div{min-width:0}
+
+.chart{display:flex;align-items:flex-end;gap:3px;height:88px}
+.cbar{flex:1;display:flex;align-items:flex-end;height:100%;min-width:2px}
+.cbar i{display:block;width:100%;background:var(--ln2);border-radius:3px;min-height:3px;transition:height .3s}
+.cbar.today i{background:var(--ac)}
+
+.fchips{display:flex;gap:8px;overflow-x:auto;padding:2px 0;scrollbar-width:none}
+.fchips::-webkit-scrollbar{display:none}
+.fchip{flex:none;min-height:34px;padding:0 14px;border-radius:99px;background:var(--sf);border:1px solid var(--ln);font-size:12.5px;font-weight:650;color:var(--mu);transition:background .16s,color .16s,border-color .16s}
+.fchip.on{background:var(--ac);border-color:transparent;color:var(--acT)}
+
+.hrow{background:var(--sf);border:1px solid var(--ln);border-radius:15px;padding:11px 6px 11px 13px;display:flex;gap:10px;align-items:flex-start}
+.del{flex:none;width:38px;height:38px;margin:-4px -2px -4px 0;display:flex;align-items:center;justify-content:center;color:var(--mu2);border-radius:11px}
+.del:active{background:var(--badS);color:var(--bad)}
+.dayhead{display:flex;align-items:center;gap:8px;margin:2px 0 -4px}
+.dayhead .ln{flex:1;height:1px;background:var(--ln)}
+
+.note{font-size:12px;color:var(--mu);line-height:1.55;padding:0 2px}
+.empty{text-align:center;color:var(--mu);padding:38px 22px;line-height:1.65;font-size:13.5px}
+.prev{background:var(--sf2);border:1px solid var(--ln);border-radius:14px;padding:13px 15px}
 .ok{color:var(--ok)}.bad{color:var(--bad)}
-.note{font-size:12px;color:var(--mu);line-height:1.5;padding:0 4px}
-.empty{text-align:center;color:var(--mu);padding:32px 16px;line-height:1.6}
-.prev{background:var(--sf2);border:1px solid var(--ln);border-radius:14px;padding:11px 14px}
-.native .webonly{display:none}
 
-/* sheet */
-#sheet{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;z-index:30;max-width:560px;margin-inline:auto}
-#sheet.on{display:flex}
-#sheetBody{flex:1;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 12px) 14px 14px;display:flex;flex-direction:column;gap:14px}
-#sheetFoot{padding:8px 14px calc(env(safe-area-inset-bottom) + 12px)}
-.back{width:40px;height:40px;border-radius:20px;background:var(--sf);border:1px solid var(--ln);display:flex;align-items:center;justify-content:center}
+/* hero */
+.hero{background:linear-gradient(160deg,var(--sf) 0%,var(--sf) 55%,var(--acS) 190%);position:relative;overflow:hidden}
+.hero .big{font-size:40px;letter-spacing:-.035em;font-weight:780}
+.ring{transform:rotate(-90deg);flex:none}
+.ringbg{fill:none;stroke:var(--ln);stroke-width:7}
+.ringfg{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .7s linear}
 
-.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#000d;color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;max-width:90%;text-align:center;z-index:50}
-.toast.on{opacity:1}
-#alert{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;padding:24px;z-index:60}
+.acc{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:14px;cursor:pointer;transition:transform .12s,border-color .18s}
+.acc:active{transform:scale(.985)}
+.acc .nm{font-weight:650;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
+.more{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mu2);flex:none;margin:-6px -6px -6px 0}
+.more:active{background:var(--sf2)}
+
+/* ---------- scrim + sheet ---------- */
+#scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+#scrim.on{opacity:1;pointer-events:auto}
+#sheet{
+  position:fixed;left:0;right:0;bottom:0;max-width:520px;margin-inline:auto;max-height:92dvh;
+  background:var(--bg2);border:1px solid var(--ln);border-bottom:0;border-radius:24px 24px 0 0;
+  z-index:45;display:flex;flex-direction:column;transform:translateY(101%);
+  transition:transform .32s cubic-bezier(.32,.72,0,1);box-shadow:var(--sh);
+}
+#sheet.on{transform:translateY(0)}
+#sheetBody{overflow-y:auto;overscroll-behavior:contain;padding:6px 16px 18px;display:flex;flex-direction:column;gap:16px}
+#sheetFoot{padding:10px 16px calc(env(safe-area-inset-bottom) + 14px);border-top:1px solid var(--ln);background:var(--bg2)}
+#sheetFoot:empty{display:none}
+.grab{width:38px;height:4px;border-radius:99px;background:var(--ln2);margin:10px auto 6px;flex:none}
+.sheethead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-top:2px}
+.xbtn{width:36px;height:36px;border-radius:12px;background:var(--sf2);display:flex;align-items:center;justify-content:center;color:var(--mu);flex:none}
+.xbtn:active{background:var(--sf3)}
+.accgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.who{
+  min-height:72px;border-radius:14px;background:var(--sf);border:1.5px solid var(--ln);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  padding:8px 4px;font-size:11px;font-weight:650;transition:border-color .16s,background .16s;
+}
+.who.on{border-color:var(--ac);background:var(--acS)}
+.who span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- modal ---------- */
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:22px;z-index:70;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+#modal.on{display:flex}
+#modalCard{background:var(--bg2);border:1px solid var(--ln);border-radius:20px;padding:20px;max-width:380px;width:100%;box-shadow:var(--sh);animation:pop .22s cubic-bezier(.2,1.2,.4,1)}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+
+#alert{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:22px;z-index:80;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 #alert.on{display:flex}
-#alert div{background:var(--sf);border:2px solid var(--ok);border-radius:22px;padding:24px;text-align:center;max-width:340px;width:100%}
-#alert h2{font-size:17px;margin-bottom:6px}
-#ren{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:24px;z-index:70}
-#ren.on{display:flex}
-#ren>div{background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:18px;max-width:340px;width:100%}
-#ren h2{margin-bottom:12px;font-size:16px}
+.alertcard{background:var(--bg2);border:2px solid var(--ok);border-radius:24px;padding:24px;text-align:center;max-width:360px;width:100%;box-shadow:0 0 60px -12px var(--ok);animation:pop .25s cubic-bezier(.2,1.2,.4,1)}
+.alertico{font-size:38px;line-height:1;margin-bottom:10px}
+.alertbtns{display:flex;flex-direction:column;gap:8px;margin-top:20px}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 84px);transform:translate(-50%,14px);
+  background:#000000dd;color:#fff;padding:11px 12px 11px 18px;border-radius:99px;font-size:13px;
+  display:flex;align-items:center;gap:10px;opacity:0;pointer-events:none;transition:.26s;max-width:92%;
+  z-index:90;box-shadow:0 12px 30px -12px #000;
+}
+#toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#toastBtn{background:rgba(255,255,255,.16);padding:6px 12px;border-radius:99px;font-weight:700;font-size:12.5px;flex:none}
+#toastBtn[hidden]{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
 <div id="app">
-  <div id="view"></div>
-  <nav>
-    <button data-tab="acc"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M5 4 3 6M19 4l2 2"/></svg>Accounts</button>
-    <button data-tab="ses"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Sessions</button>
-    <button data-tab="set"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Settings</button>
+  <div id="view" role="main"></div>
+  <nav id="tabbar">
+    <button data-tab="acc" aria-label="Accounts">
+      <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M5 4 3 6M19 4l2 2"/></svg>
+      <span>Accounts</span>
+    </button>
+    <button data-tab="ses" aria-label="Sessions">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      <span>Sessions</span>
+    </button>
+    <button data-tab="set" aria-label="Settings">
+      <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M4 6h4M14 6h6M4 12h10M18 12h2M4 18h6M12 18h8"/></svg>
+      <span>Settings</span>
+    </button>
   </nav>
 </div>
 
-<div id="sheet"><div id="sheetBody"></div><div id="sheetFoot"><button class="btn pri big2" data-savesheet>Start reminder</button></div></div>
-<div id="alert"><div><h2 id="aT">Limit reset</h2><p id="aP"></p><button class="btn pri" id="aOk">OK</button></div></div>
-<div id="ren"><div><h2>Rename account</h2><input class="field" id="renIn" maxlength="24" autocomplete="off" aria-label="Account name"><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-rencancel>Cancel</button><button class="btn pri" data-rensave>Save</button></div></div></div>
-<div class="toast" id="toast"></div>
+<div id="scrim" data-closesheet></div>
+<div id="sheet" role="dialog" aria-modal="true" aria-label="Sheet">
+  <div class="grab"></div>
+  <div id="sheetBody"></div>
+  <div id="sheetFoot"></div>
+</div>
+
+<div id="modal" role="dialog" aria-modal="true"><div id="modalCard"></div></div>
+
+<div id="alert" role="alertdialog" aria-modal="true" aria-labelledby="aTitle">
+  <div class="alertcard">
+    <div class="alertico">🔔</div>
+    <h2 id="aTitle">Limit reset</h2>
+    <p id="aBody" class="mu" style="font-size:13.5px;margin-top:8px"></p>
+    <div class="alertbtns">
+      <button class="btn pri wide" id="aStart">Start session</button>
+      <div class="row" style="gap:8px">
+        <button class="btn sp" id="aSnz">Snooze 5 min</button>
+        <button class="btn sp" id="aDismiss">Dismiss</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"><span id="toastMsg"></span><button id="toastBtn" hidden></button></div>
 
 <script>
-/* ================= setup ================= */
-const KEY='limitReminderV1', SKEY='limitBellSettings', LKEY='limitBellSessions';
-const COLORS=['#5CC8D7','#A99BFF','#FF8FB1','#B4DC6A'];
-const WINDOW=5*3600e3;
+/* ============================================================
+   Limit Bell — v3
+   ============================================================ */
+const COLORS=[
+  {c:'#5CC8D7',n:'Teal'},{c:'#A99BFF',n:'Violet'},{c:'#FF8FB1',n:'Rose'},
+  {c:'#B4DC6A',n:'Lime'},{c:'#F0A05D',n:'Amber'},{c:'#7FB3FF',n:'Blue'}
+];
+const ACCENTS={
+  ember:{n:'Ember',d:['#F08A5D','#1A0F0A','rgba(240,138,93,.15)'],l:['#C2501F','#FFFFFF','rgba(194,80,31,.10)']},
+  ocean:{n:'Ocean',d:['#5CC8D7','#04212A','rgba(92,200,215,.15)'],l:['#0B6C79','#FFFFFF','rgba(11,108,121,.10)']},
+  mint:{n:'Mint',d:['#63DFA0','#04241A','rgba(99,223,160,.15)'],l:['#12734A','#FFFFFF','rgba(18,115,74,.10)']},
+  iris:{n:'Iris',d:['#A99BFF','#100A2A','rgba(169,155,255,.17)'],l:['#5A45C8','#FFFFFF','rgba(90,69,200,.10)']},
+  rose:{n:'Rose',d:['#FF8FB1','#2A0714','rgba(255,143,177,.15)'],l:['#B32B57','#FFFFFF','rgba(179,43,87,.10)']}
+};
+const TONES=[
+  {id:'default',n:'System default'},{id:'chime',n:'Chime'},{id:'bell',n:'Bell'},
+  {id:'beep',n:'Beep'},{id:'alarm',n:'Alarm (loud)'}
+];
+const DBKEY='limitBell.v3';
+const DEF={
+  theme:'dark',accent:'ember',tone:'default',
+  early:true,earlyMin:10,repeat:false,repeatMin:10,
+  vib:true,haptics:true,inApp:true,
+  windowH:5,keepDays:0,defaultHours:3
+};
+
+/* ---------------- tiny utils ---------------- */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.prototype.slice.call(r.querySelectorAll(s));
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const pad=n=>String(n).padStart(2,'0');
+const fmtT=ms=>new Date(ms).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+const fmtD=ms=>new Date(ms).toLocaleDateString([],{month:'short',day:'numeric'});
+const fmtLeft=ms=>{
+  ms=Math.max(0,ms);const s=Math.floor(ms/1000);
+  const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;
+  return h>0?h+':'+pad(m)+':'+pad(sec):m+':'+pad(sec);
+};
+const fmtDur=ms=>{
+  const m=Math.max(0,Math.round(ms/60000));
+  if(m<60)return m+'m';
+  const h=Math.floor(m/60),r=m%60;
+  return h+'h'+(r?' '+pad(r)+'m':'');
+};
+const dayStart=ms=>{const d=new Date(ms);d.setHours(0,0,0,0);return d.getTime()};
+let _seq=1;
+const uid=p=>p+Date.now().toString(36)+(_seq++).toString(36);
+const loadJSON=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
+const saveJSON=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+
+/* ---------------- native bridge ---------------- */
 const CAP=window.Capacitor;
 const native=!!(CAP&&CAP.isNativePlatform&&CAP.isNativePlatform());
-let LN=null,SO=null;
+let LN=null,SO=null,HA=null,APP=null;
 if(native){
   try{LN=(CAP.Plugins&&CAP.Plugins.LocalNotifications)||CAP.registerPlugin('LocalNotifications')}catch(e){}
   try{SO=CAP.registerPlugin('SettingsOpener')}catch(e){}
+  try{HA=(CAP.Plugins&&CAP.Plugins.Haptics)||CAP.registerPlugin('Haptics')}catch(e){}
+  try{APP=CAP.registerPlugin('App')}catch(e){}
   document.body.classList.add('native');
 }
-const TONES=[{id:'default',n:'Default (system)'},{id:'chime',n:'Chime'},{id:'bell',n:'Bell'},{id:'beep',n:'Beep'},{id:'alarm',n:'Alarm (loud)'}];
 
-const $=s=>document.querySelector(s);
-const pad=n=>String(n).padStart(2,'0');
-const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-const fmtT=ms=>new Date(ms).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-const fmtLeft=ms=>{const s=Math.max(0,Math.floor(ms/1000));return pad(Math.floor(s/3600))+':'+pad(Math.floor(s%3600/60))+':'+pad(s%60)};
-const fmtDur=ms=>{const m=Math.max(0,Math.round(ms/60000));return Math.floor(m/60)+'h '+pad(m%60)+'m'};
-const dayKey=ms=>{const d=new Date(ms);return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()};
-function load(k,def){try{const v=JSON.parse(localStorage.getItem(k));return v==null?def:v}catch(e){return def}}
-function put(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+/* ---------------- data ---------------- */
+function migrate(){
+  const raw=loadJSON(DBKEY,null);
+  if(raw&&raw.v===3&&Array.isArray(raw.accounts))return raw;
 
-let S=load(KEY,null);
-if(!Array.isArray(S)||S.length!==4)S=[1,2,3,4].map(i=>({id:i,name:'Account '+i,resetAt:null,notified:true,startedAt:null,hitAt:null}));
-let ST=Object.assign({theme:'dark',tone:'default',early:true,repeat:false,keepDays:90},load(SKEY,{}));
-let LOG=load(LKEY,[]);
-if(ST.keepDays>0){const cut=Date.now()-ST.keepDays*864e5;LOG=LOG.filter(s=>s.hitAt>=cut)}
-const saveS=()=>put(KEY,S), saveT=()=>put(SKEY,ST), saveL=()=>put(LKEY,LOG);
+  const oldA=loadJSON('limitReminderV1',null);
+  const oldS=loadJSON('limitBellSettings',{})||{};
+  const oldL=loadJSON('limitBellSessions',[])||[];
+  const src=(Array.isArray(oldA)&&oldA.length)
+    ? oldA
+    : [1,2,3,4].map(i=>({id:i,name:'Account '+i,resetAt:null,startedAt:null,hitAt:null,notified:true}));
 
-let tab='acc', fil='all', sh=null, perm={}, renIdx=null;
-const channel=()=>'limit_'+ST.tone;
-
-function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2800)}
-
-/* ================= theme ================= */
-function applyTheme(){
-  const dark=ST.theme==='dark'||(ST.theme==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);
-  document.documentElement.dataset.theme=dark?'dark':'light';
-  $('#themeMeta').content=dark?'#0E1014':'#F4F5F7';
+  const accounts=src.map((a,i)=>({
+    id:uid('a'),nid:i+1,name:a.name||('Account '+(i+1)),color:i%COLORS.length,
+    resetAt:a.resetAt||null,startedAt:a.startedAt||null,hitAt:a.hitAt||null,
+    notified:a.notified!==false,windowH:DEF.windowH,alerts:true
+  }));
+  const map={};accounts.forEach((a,i)=>{map[i]=a.id});
+  const log=(Array.isArray(oldL)?oldL:[]).filter(Boolean).map((s,i)=>({
+    id:s.id||uid('l'),acc:map[s.acc]||accounts[0].id,
+    an:(src[s.acc]&&src[s.acc].name)||null,
+    hitAt:s.hitAt||Date.now(),startedAt:s.startedAt||null,
+    resetAt:s.resetAt||Date.now()+DEF.windowH*3600e3,note:s.note||''
+  }));
+  const settings=Object.assign({},DEF,{
+    theme:oldS.theme==='light'||oldS.theme==='system'?oldS.theme:'dark',
+    tone:oldS.tone||'default',
+    early:oldS.early!==false,
+    repeat:!!oldS.repeat,
+    keepDays:typeof oldS.keepDays==='number'?oldS.keepDays:0
+  });
+  return {v:3,accounts,log,settings};
 }
-try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme)}catch(e){}
 
-/* ================= account state ================= */
-function stateOf(a,now=Date.now()){
-  if(a.resetAt&&a.resetAt>now)return 'wait';
+let db=migrate();
+db.settings=Object.assign({},DEF,db.settings);
+if(!Array.isArray(db.accounts))db.accounts=[];
+if(!Array.isArray(db.log))db.log=[];
+const persist=()=>saveJSON(DBKEY,db);
+
+function pruneLog(){
+  const kd=db.settings.keepDays;
+  if(kd>0){
+    const cut=Date.now()-kd*864e5;
+    db.log=db.log.filter(l=>l.hitAt>=cut);
+  }
+}
+pruneLog();
+
+/* ---------------- UI state ---------------- */
+let tab='acc';
+let sesView='history';
+let fil='all';
+let search='';
+let range=7;
+let sh=null, sheetOpen=false, modalOpen=false;
+let perm={notif:null,exact:null,bat:null};
+let lastStates='';
+let alertAccId=null;
+
+/* ---------------- theme ---------------- */
+function applyTheme(){
+  const s=db.settings;
+  const dark=s.theme==='dark'||(s.theme==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const root=document.documentElement;
+  root.dataset.theme=dark?'dark':'light';
+  const acc=ACCENTS[s.accent]||ACCENTS.ember;
+  const v=dark?acc.d:acc.l;
+  root.style.setProperty('--ac',v[0]);
+  root.style.setProperty('--acT',v[1]);
+  root.style.setProperty('--acS',v[2]);
+  const m=$('#themeMeta');if(m)m.content=dark?'#0B0D11':'#F2F4F8';
+}
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme)}catch(e){}
+
+/* ---------------- derived state ---------------- */
+function stateOf(a,t){
+  t=t||Date.now();
+  if(a.resetAt&&a.resetAt>t)return 'wait';
   if(a.startedAt)return 'work';
-  if(a.resetAt)return 'ready';
+  if(a.resetAt&&t-a.resetAt<6*3600e3)return 'ready';
   return 'free';
 }
 const ORDER={wait:0,ready:1,work:2,free:3};
-function sortedIdx(now=Date.now()){
-  return S.map((a,i)=>i).sort((x,y)=>{
-    const sx=stateOf(S[x],now),sy=stateOf(S[y],now);
+function sortedAccounts(t){
+  t=t||Date.now();
+  return db.accounts.slice().sort((x,y)=>{
+    const sx=stateOf(x,t),sy=stateOf(y,t);
     if(sx!==sy)return ORDER[sx]-ORDER[sy];
-    return sx==='wait'?S[x].resetAt-S[y].resetAt:x-y;
+    if(sx==='wait')return x.resetAt-y.resetAt;
+    if(sx==='ready')return y.resetAt-x.resetAt;
+    return 0;
   });
 }
-const chipHtml=i=>`<span class="chip" style="background:${COLORS[i]}">${i+1}</span>`;
+const chipOf=a=>{
+  const c=COLORS[(a.color||0)%COLORS.length].c;
+  return '<span class="chip" style="background:'+c+'">'+esc((a.name||'?').trim().charAt(0).toUpperCase())+'</span>';
+};
+const logName=l=>l.an||((db.accounts.find(a=>a.id===l.acc)||{}).name)||'Account';
+const logColor=l=>{
+  const a=db.accounts.find(x=>x.id===l.acc);
+  return COLORS[((a&&a.color)||0)%COLORS.length].c;
+};
 
-/* ================= native notifications ================= */
-let askedExact=false;
+function parts(a,t){
+  const s=stateOf(a,t);
+  const W=(a.windowH||db.settings.windowH||5)*3600e3;
+  if(s==='wait'){
+    const start=a.hitAt||(a.resetAt-W);
+    const tot=Math.max(60e3,a.resetAt-start);
+    const left=a.resetAt-t;
+    return {s:s,pill:'Waiting',time:fmtLeft(left),sub:'Resets at '+fmtT(a.resetAt),
+      pct:clamp(100-left/tot*100,0,100),col:'var(--wt)',tc:'var(--tx)'};
+  }
+  if(s==='work'){
+    const el=t-a.startedAt;
+    return {s:s,pill:'Working',time:fmtLeft(el),sub:'Started '+fmtT(a.startedAt),
+      pct:clamp(el/W*100,0,100),col:'var(--wk)',tc:'var(--wk)'};
+  }
+  if(s==='ready'){
+    return {s:s,pill:'Ready',time:'Ready now',sub:'Reset at '+fmtT(a.resetAt),
+      pct:100,col:'var(--ok)',tc:'var(--ok)'};
+  }
+  return {s:s,pill:'Free',time:'Not limited',sub:'Tap to log a limit',
+    pct:0,col:'var(--ln2)',tc:'var(--mu)'};
+}
+
+/* ---------------- toast ---------------- */
+let toastTimer=null,toastCb=null;
+function toast(msg,actionLabel,cb){
+  const box=$('#toast'),btn=$('#toastBtn');
+  $('#toastMsg').textContent=msg;
+  if(actionLabel){btn.hidden=false;btn.textContent=actionLabel;toastCb=cb||null}
+  else{btn.hidden=true;toastCb=null}
+  box.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{box.classList.remove('on');toastCb=null},actionLabel?6500:2700);
+}
+$('#toastBtn').addEventListener('click',()=>{
+  const cb=toastCb;toastCb=null;clearTimeout(toastTimer);
+  $('#toast').classList.remove('on');
+  if(cb)cb();
+});
+
+/* ---------------- haptics / sound ---------------- */
+function buzz(pattern){
+  if(!db.settings.vib)return;
+  try{if(navigator.vibrate)navigator.vibrate(pattern)}catch(e){}
+}
+function tap(style){
+  if(!db.settings.haptics)return;
+  try{
+    if(HA&&HA.impact){HA.impact({style:style||'LIGHT'}).catch(()=>{});return}
+    if(navigator.vibrate)navigator.vibrate(8);
+  }catch(e){}
+}
+let AC=null;
+function beep(){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+    [0,.3,.6].forEach(off=>{
+      const o=AC.createOscillator(),g=AC.createGain();
+      o.type='sine';o.frequency.value=880;
+      o.connect(g);g.connect(AC.destination);
+      const t0=AC.currentTime+off;
+      g.gain.setValueAtTime(.0001,t0);
+      g.gain.exponentialRampToValueAtTime(.22,t0+.02);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+.24);
+      o.start(t0);o.stop(t0+.26);
+    });
+  }catch(e){}
+}
+function playTone(id){
+  id=id||db.settings.tone;
+  if(id==='default'){beep();return}
+  try{
+    const a=new Audio('sounds/'+id+'.wav');
+    const p=a.play();
+    if(p&&p.catch)p.catch(beep);
+  }catch(e){beep()}
+}
+
+/* ---------------- native notifications ---------------- */
+const channel=()=>'limit_'+db.settings.tone;
+const idsFor=a=>({reset:a.nid*10+1,early:a.nid*10+2,rep:a.nid*10+3});
+
 async function nativeInit(){
   if(!LN)return;
   for(const t of TONES){
-    const o={id:'limit_'+t.id,name:'Limit reset - '+t.n,description:'Claude limit reset alerts',importance:5,visibility:1,vibration:true};
+    const o={id:'limit_'+t.id,name:'Limit reset · '+t.n,description:'Limit Bell alerts',
+      importance:5,visibility:1,vibration:true};
     if(t.id!=='default')o.sound=t.id+'.wav';
     try{await LN.createChannel(o)}catch(e){}
   }
 }
+let askedExact=false;
 async function ensureReady(){
-  if(!LN){toast('Native plugin not found');return false}
+  if(!LN){toast('Notification plugin not found');return false}
   try{
     let p=await LN.checkPermissions();
     if(p.display!=='granted')p=await LN.requestPermissions();
-    if(p.display!=='granted'){toast('Notification permission was not granted');return false}
+    if(p.display!=='granted'){toast('Notifications are blocked — enable them in Settings');return false}
   }catch(e){toast('Permission error: '+(e.message||e));return false}
   try{
     const ex=await LN.checkExactNotificationSetting();
-    if(ex.exact_alarm!=='granted'&&!askedExact){askedExact=true;toast('Turn on "Alarms & reminders", then come back');await LN.changeExactNotificationSetting()}
+    if(ex.exact_alarm!=='granted'&&!askedExact){
+      askedExact=true;
+      toast('Turn on “Alarms & reminders”, then come back');
+      await LN.changeExactNotificationSetting();
+    }
   }catch(e){}
   return true;
 }
 async function pendingCount(){try{return (await LN.getPending()).notifications.length}catch(e){return -1}}
-async function nativeCancelAll(id){if(LN){try{await LN.cancel({notifications:[{id},{id:100+id},{id:200+id}]})}catch(e){}}}
-async function nativeSchedule(a,quiet){
+async function cancelFor(a){
+  if(!LN)return;
+  const i=idsFor(a);
+  try{await LN.cancel({notifications:[{id:i.reset},{id:i.early},{id:i.rep}]})}catch(e){}
+}
+async function scheduleFor(a,quiet){
   if(!LN||!a.resetAt)return;
-  const now=Date.now(),list=[];
-  list.push({id:a.id,title:a.name+' is ready',body:'Limit reset. Time to get back to work.',schedule:{at:new Date(a.resetAt),allowWhileIdle:true},channelId:channel()});
-  if(ST.early&&a.resetAt-600e3>now+5000)list.push({id:100+a.id,title:a.name+' is almost ready',body:'Resets in 10 minutes.',schedule:{at:new Date(a.resetAt-600e3),allowWhileIdle:true},channelId:channel()});
-  if(ST.repeat)list.push({id:200+a.id,title:a.name+' is still waiting for you',body:'Limit reset 10 minutes ago.',schedule:{at:new Date(a.resetAt+600e3),allowWhileIdle:true},channelId:channel()});
+  await cancelFor(a);
+  if(a.alerts===false)return;
+  const now=Date.now(),i=idsFor(a),list=[];
+  const S=db.settings;
+  if(a.resetAt>now+5000){
+    list.push({id:i.reset,title:a.name+' is ready',body:'Limit reset. Time to get back to work.',
+      schedule:{at:new Date(a.resetAt),allowWhileIdle:true},channelId:channel()});
+  }
+  if(S.early&&a.resetAt-S.earlyMin*60e3>now+8000){
+    list.push({id:i.early,title:a.name+' resets in '+S.earlyMin+' min',
+      body:'Heads up — reset at '+fmtT(a.resetAt)+'.',
+      schedule:{at:new Date(a.resetAt-S.earlyMin*60e3),allowWhileIdle:true},channelId:channel()});
+  }
+  if(S.repeat&&a.resetAt+S.repeatMin*60e3>now+8000){
+    list.push({id:i.rep,title:a.name+' is still waiting',
+      body:'The limit reset '+S.repeatMin+' minutes ago.',
+      schedule:{at:new Date(a.resetAt+S.repeatMin*60e3),allowWhileIdle:true},channelId:channel()});
+  }
+  if(!list.length)return;
   try{
-    await nativeCancelAll(a.id);
     await LN.schedule({notifications:list});
-    if(!quiet){const n=await pendingCount();toast(a.name+': alert set for '+fmtT(a.resetAt)+' ('+n+' scheduled)')}
+    if(!quiet){
+      const n=await pendingCount();
+      toast(a.name+': alert set for '+fmtT(a.resetAt)+(n>=0?' · '+n+' scheduled':''));
+    }
   }catch(e){toast('Scheduling error: '+(e.message||e))}
 }
-function rescheduleAll(){if(native)S.forEach(a=>{if(a.resetAt&&a.resetAt>Date.now())nativeSchedule(a,true)})}
-
-/* ================= sound / in-app alert ================= */
-function beep(){
-  try{const c=new (window.AudioContext||window.webkitAudioContext)();
-    [0,.3,.6].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.2,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.25);o.start(c.currentTime+t);o.stop(c.currentTime+t+.25)});
-  }catch(e){}
-}
-function playTone(id){if(id==='default'){beep();return}try{new Audio('sounds/'+id+'.wav').play().catch(beep)}catch(e){beep()}}
-function inAppAlert(title,body){
-  try{navigator.vibrate&&navigator.vibrate([300,150,300,150,300])}catch(e){}
-  playTone(ST.tone);
-  $('#aT').textContent=title;$('#aP').textContent=body;$('#alert').classList.add('on');
-}
-$('#aOk').onclick=()=>$('#alert').classList.remove('on');
-
-/* ================= views ================= */
-function render(){
-  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
-  if(tab==='acc')renderAcc();else if(tab==='ses')renderSes();else renderSet();
-  $('#view').scrollTop=0;
+function rescheduleAll(){
+  if(!native)return;
+  db.accounts.forEach(a=>{if(a.resetAt)scheduleFor(a,true)});
 }
 
-function heroInfo(now){
-  const waits=S.filter(a=>stateOf(a,now)==='wait').sort((x,y)=>x.resetAt-y.resetAt);
-  if(waits.length)return{t:fmtLeft(waits[0].resetAt-now),s:waits[0].name+' resets at '+fmtT(waits[0].resetAt),id:waits[0].id};
-  const r=S.find(a=>stateOf(a,now)==='ready');
-  if(r)return{t:'Ready now',s:r.name+' is ready to use',id:null};
-  return{t:'All free',s:'Log a limit when an account runs out',id:null};
+/* ---------------- modal helpers ---------------- */
+function openModal(html){
+  $('#modalCard').innerHTML=html;
+  $('#modal').classList.add('on');
+  modalOpen=true;
 }
-function cardParts(a,now){
-  const s=stateOf(a,now);
-  if(s==='wait'){const tot=Math.max(1,a.resetAt-(a.hitAt||a.resetAt-WINDOW));return{s,pill:'Waiting',time:fmtLeft(a.resetAt-now),sub:'Resets '+fmtT(a.resetAt),pct:Math.min(100,Math.max(0,100-(a.resetAt-now)/tot*100)),col:'var(--wt)',tc:'var(--tx)'}}
-  if(s==='work')return{s,pill:'Working',time:fmtLeft(now-a.startedAt),sub:'Started '+fmtT(a.startedAt),pct:Math.min(100,(now-a.startedAt)/WINDOW*100),col:'var(--wk)',tc:'var(--wk)'};
-  if(s==='ready')return{s,pill:'Ready',time:'Ready now',sub:'Reset at '+fmtT(a.resetAt),pct:100,col:'var(--ok)',tc:'var(--ok)'};
-  return{s,pill:'Free',time:'Not limited',sub:'Tap to log a limit',pct:0,col:'var(--ln)',tc:'var(--mu)'};
+function closeModal(){
+  $('#modal').classList.remove('on');
+  modalOpen=false;
+  setTimeout(()=>{if(!modalOpen)$('#modalCard').innerHTML=''},200);
 }
-
-function renderAcc(){
-  const now=Date.now(),h=heroInfo(now);
-  const cnt={wait:0,ready:0,work:0,free:0};S.forEach(a=>cnt[stateOf(a,now)]++);
-  const pills=[];
-  if(cnt.wait)pills.push(`<span class="pill wait">${cnt.wait} waiting</span>`);
-  if(cnt.ready)pills.push(`<span class="pill ready">${cnt.ready} ready</span>`);
-  if(cnt.work)pills.push(`<span class="pill work">${cnt.work} working</span>`);
-  if(cnt.free)pills.push(`<span class="pill">${cnt.free} free</span>`);
-  $('#view').innerHTML=`
-  <div class="row between">
-    <div><div class="mu" style="font-size:13px">${new Date().toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'short'})}</div><h1>Limit Bell</h1></div>
-    <button class="fab" data-open="auto" aria-label="Log a limit"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
-  </div>
-  <div class="card hero" style="display:flex;flex-direction:column;gap:10px">
-    <div class="cap">Next ready</div>
-    <div class="big num" id="heroT">${h.t}</div>
-    <div id="heroS" style="font-size:14px;color:var(--mu)">${esc(h.s)}</div>
-    <div class="row" style="flex-wrap:wrap;padding-top:4px">${pills.join('')}</div>
-  </div>
-  <div class="row between"><h2>Accounts</h2><span class="mu" style="font-size:13px">Soonest first</span></div>
-  <div style="display:flex;flex-direction:column;gap:10px">
-  ${sortedIdx(now).map(i=>{
-    const a=S[i],p=cardParts(a,now);
-    const act=p.s==='work'?`<button class="btn" data-open="${i}">Hit limit</button>`:(p.s==='ready'||p.s==='free')?`<button class="btn pri" data-start="${i}">Start session</button>`:'';
-    return `<div class="acc" data-open="${i}" role="button" tabindex="0" aria-label="${esc(a.name)}, ${p.pill}">
-      <div class="row">${chipHtml(i)}<span class="sp" style="font-weight:600">${esc(a.name)}</span><span class="pill ${p.s}">${p.pill}</span></div>
-      <div class="row between" style="margin-top:8px">
-        <div><div class="big num" data-t="${i}" style="color:${p.tc}">${p.time}</div><div class="mu" style="font-size:13px;margin-top:2px">${p.sub}</div></div>
-        ${act}
-      </div>
-      <div class="bar"><i data-b="${i}" style="width:${p.pct}%;background:${p.col}"></i></div>
-    </div>`}).join('')}
-  </div>`;
+function promptDialog(o){
+  openModal(
+    '<h2>'+esc(o.title)+'</h2>'+
+    (o.label?'<label class="cap" style="display:block;margin:14px 0 7px">'+esc(o.label)+'</label>':'')+
+    '<input class="field" id="mIn" type="'+(o.type||'text')+'" value="'+esc(o.value||'')+'" '+
+      'placeholder="'+esc(o.placeholder||'')+'" '+(o.maxlength?'maxlength="'+o.maxlength+'"':'')+'>'+
+    '<div class="row" style="justify-content:flex-end;gap:8px;margin-top:18px">'+
+      '<button class="btn" data-mclose>Cancel</button>'+
+      '<button class="btn pri" id="mOk">'+esc(o.ok||'Save')+'</button></div>'
+  );
+  const inp=$('#mIn');
+  setTimeout(()=>{inp.focus();try{inp.select()}catch(e){}},90);
+  const ok=()=>{const v=inp.value.trim();closeModal();o.onOk(v)};
+  $('#mOk').onclick=ok;
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();ok()}});
+}
+function confirmDialog(o){
+  openModal(
+    '<h2>'+esc(o.title)+'</h2>'+
+    '<p class="mu" style="font-size:13.5px;margin-top:9px;line-height:1.55">'+esc(o.msg||'')+'</p>'+
+    '<div class="row" style="justify-content:flex-end;gap:8px;margin-top:18px">'+
+      '<button class="btn" data-mclose>Cancel</button>'+
+      '<button class="btn '+(o.danger?'danger':'pri')+'" id="mOk">'+esc(o.ok||'Confirm')+'</button></div>'
+  );
+  $('#mOk').onclick=()=>{closeModal();o.onOk()};
 }
 
-function weekStats(){
-  const from=Date.now()-7*864e5,rows=LOG.filter(s=>s.hitAt>=from);
-  const w=rows.filter(s=>s.startedAt).map(s=>s.hitAt-s.startedAt);
-  const waited=rows.reduce((t,s)=>t+Math.max(0,Math.min(s.resetAt,Date.now())-s.hitAt),0);
-  return{n:rows.length,avg:w.length?fmtDur(w.reduce((a,b)=>a+b,0)/w.length):'-',waited:fmtDur(waited)};
+/* ---------------- sheet ---------------- */
+function openSheet(type,data){
+  sh=Object.assign({type:type},data||{});
+  renderSheet();
+  $('#scrim').classList.add('on');
+  $('#sheet').classList.add('on');
+  sheetOpen=true;
+  tap('LIGHT');
 }
-function renderSes(){
-  const st=weekStats(),now=new Date();
-  const days=[];for(let k=6;k>=0;k--){const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-k);days.push({key:d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate(),n:d.toLocaleDateString('en-US',{weekday:'narrow'}),today:k===0,c:0})}
-  LOG.forEach(s=>{const d=days.find(x=>x.key===dayKey(s.hitAt));if(d)d.c++});
-  const mx=Math.max(1,...days.map(d=>d.c));
-  const rows=LOG.filter(s=>fil==='all'||s.acc===fil).sort((a,b)=>b.hitAt-a.hitAt);
-  const groups=[];
-  rows.forEach(s=>{
-    const k=dayKey(s.hitAt);let g=groups.find(x=>x.k===k);
-    if(!g){const diff=Math.round((new Date(now.getFullYear(),now.getMonth(),now.getDate())-new Date(new Date(s.hitAt).getFullYear(),new Date(s.hitAt).getMonth(),new Date(s.hitAt).getDate()))/864e5);
-      g={k,t:diff===0?'Today':diff===1?'Yesterday':new Date(s.hitAt).toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'short'}),rows:[]};groups.push(g)}
-    g.rows.push(s);
+function closeSheet(){
+  sheetOpen=false;sh=null;
+  $('#sheet').classList.remove('on');
+  $('#scrim').classList.remove('on');
+  setTimeout(()=>{if(!sheetOpen){$('#sheetBody').innerHTML='';$('#sheetFoot').innerHTML=''}},340);
+}
+function renderSheet(){
+  if(!sh)return;
+  const body=$('#sheetBody'),foot=$('#sheetFoot');
+  if(sh.type==='log'){body.innerHTML=logSheetHTML();foot.innerHTML='<button class="btn pri wide" data-save>Set alert</button>'}
+  else if(sh.type==='add'){body.innerHTML=addSheetHTML();foot.innerHTML='<button class="btn pri wide" data-add>Add account</button>'}
+  else{body.innerHTML=menuSheetHTML();foot.innerHTML=''}
+  body.scrollTop=0;
+}
+
+/* ---------- log sheet ---------- */
+function logTarget(){
+  if(sh&&sh.time){
+    const p=sh.time.split(':').map(Number);
+    const d=new Date();
+    d.setHours(p[0],p[1],0,0);
+    if(d.getTime()<=Date.now()+30e3)d.setDate(d.getDate()+1);
+    return d.getTime();
+  }
+  const h=(sh&&sh.hours)||db.settings.defaultHours||3;
+  return Date.now()+h*3600e3;
+}
+function logSheetHTML(){
+  const a=db.accounts.find(x=>x.id===sh.accId)||db.accounts[0];
+  if(!a)return '<div class="empty">Add an account first.</div>';
+  sh.accId=a.id;
+  const t=Date.now();
+  const s=stateOf(a,t);
+  const tgt=logTarget();
+  const recent=[];
+  for(let i=db.log.length-1;i>=0&&recent.length<4;i--){
+    const n=(db.log[i].note||'').trim();
+    if(n&&recent.indexOf(n)<0)recent.push(n);
+  }
+  const info=s==='work'
+    ? '<div class="note" style="margin-top:8px">Worked so far: <b>'+fmtDur(t-a.startedAt)+'</b></div>'
+    : s==='wait'
+      ? '<div class="note" style="margin-top:8px">Already waiting until '+fmtT(a.resetAt)+'. Saving moves the reset.</div>'
+      : '';
+
+  return ''+
+  '<div class="sheethead">'+
+    '<div><div class="cap">'+(s==='wait'?'Adjust alarm':'New alarm')+'</div><h2 style="margin-top:3px">Log a limit</h2></div>'+
+    '<button class="xbtn" data-closesheet aria-label="Close"><svg class="ic sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'+
+  '</div>'+
+
+  '<div><div class="cap" style="margin-bottom:9px">Account</div>'+
+    '<div class="accgrid">'+db.accounts.map(x=>
+      '<button class="who '+(x.id===sh.accId?'on':'')+'" data-sacc="'+x.id+'">'+
+        chipOf(x)+'<span>'+esc(x.name)+'</span></button>').join('')+'</div>'+info+
+  '</div>'+
+
+  '<div><div class="cap" style="margin-bottom:9px">Resets in</div>'+
+    '<div class="grid5">'+[1,2,3,4,5].map(h=>
+      '<button class="opt '+(!sh.time&&sh.hours===h?'on':'')+'" data-sh="'+h+'">'+h+'h</button>').join('')+'</div>'+
+    '<div class="row" style="margin-top:12px">'+
+      '<span class="mu sp" style="font-size:13.5px">Or exact reset time</span>'+
+      '<input class="field" style="width:132px;font-weight:700;text-align:center" type="time" id="shTime" value="'+(sh.time||'')+'" aria-label="Exact reset time">'+
+    '</div>'+
+  '</div>'+
+
+  '<div><div class="cap" style="margin-bottom:9px">What were you working on? <span style="text-transform:none;letter-spacing:0;font-weight:500">(optional)</span></div>'+
+    '<input class="field" id="shNote" maxlength="70" placeholder="Audit notes, FSA revision, CV review" value="'+esc(sh.note||'')+'">'+
+    (recent.length?'<div class="fchips" style="margin-top:9px">'+recent.map(n=>
+      '<button class="fchip" data-notepick="'+esc(n)+'">'+esc(n)+'</button>').join('')+'</div>':'')+
+  '</div>'+
+
+  '<div class="list">'+
+    '<div class="li"><div class="sp"><div class="t">Early reminder</div>'+
+      '<div class="sub">'+db.settings.earlyMin+' minutes before reset</div></div>'+
+      '<button class="tg '+(sh.early?'on':'')+'" data-stog="early" role="switch" aria-checked="'+!!sh.early+'" aria-label="Early reminder"><i></i></button></div>'+
+    '<div class="li"><div class="sp"><div class="t">Save to history</div>'+
+      '<div class="sub">Adds a session entry</div></div>'+
+      '<button class="tg '+(sh.save?'on':'')+'" data-stog="save" role="switch" aria-checked="'+!!sh.save+'" aria-label="Save to history"><i></i></button></div>'+
+  '</div>'+
+
+  '<div class="prev">'+
+    '<div class="cap" style="margin-bottom:6px">Preview</div>'+
+    '<div style="font-size:14.5px;font-weight:700">'+esc(a.name)+' ready at <span id="prevWhen">'+fmtT(tgt)+'</span></div>'+
+    '<div class="mu" style="font-size:12.5px;margin-top:3px">In <b id="prevIn">'+fmtDur(tgt-t)+'</b>'+
+      (native?' · phone alarm, rings with the app closed':'')+'</div>'+
+  '</div>';
+}
+function updatePreview(){
+  if(!sh||sh.type!=='log')return;
+  const tgt=logTarget(),t=Date.now();
+  const w=$('#prevWhen'),i=$('#prevIn');
+  if(w)w.textContent=fmtT(tgt);
+  if(i)i.textContent=fmtDur(tgt-t);
+  const tm=$('#shTime');
+  $$('[data-sh]').forEach(b=>b.classList.toggle('on',!sh.time&&+b.dataset.sh===sh.hours));
+  if(tm&&sh.time&&tm.value!==sh.time)tm.value=sh.time;
+  if(tm&&!sh.time)tm.value='';
+}
+async function saveLog(){
+  const a=db.accounts.find(x=>x.id===sh.accId);
+  if(!a){toast('Account not found');return}
+  const t=Date.now(),tgt=logTarget();
+  if(tgt<t+30e3){toast('Pick a time in the future');return}
+  const s=stateOf(a,t);
+  if(native&&!(await ensureReady()))return;
+
+  if(sh.save){
+    if(s==='wait'){
+      let last=null;
+      for(let i=db.log.length-1;i>=0;i--){if(db.log[i].acc===a.id){last=db.log[i];break}}
+      if(last){last.resetAt=tgt;if(sh.note)last.note=sh.note}
+      else db.log.push({id:uid('l'),acc:a.id,an:a.name,hitAt:a.hitAt||t,
+        startedAt:a.startedAt||null,resetAt:tgt,note:sh.note||''});
+    }else{
+      db.log.push({id:uid('l'),acc:a.id,an:a.name,hitAt:t,
+        startedAt:a.startedAt||null,resetAt:tgt,note:sh.note||''});
+    }
+    pruneLog();
+  }
+
+  if(s!=='wait')a.hitAt=t;
+  a.resetAt=tgt;a.notified=false;a.startedAt=null;
+  persist();
+
+  if(native)await scheduleFor(a,false);
+  closeSheet();
+  lastStates='';
+  render();
+  toast(a.name+' · alert at '+fmtT(tgt));
+  tap('MEDIUM');
+}
+
+/* ---------- add account sheet ---------- */
+function addSheetHTML(){
+  const c=sh.color==null?db.accounts.length%COLORS.length:sh.color;
+  return ''+
+  '<div class="sheethead">'+
+    '<div><div class="cap">New</div><h2 style="margin-top:3px">Add account</h2></div>'+
+    '<button class="xbtn" data-closesheet aria-label="Close"><svg class="ic sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'+
+  '</div>'+
+  '<div><div class="cap" style="margin-bottom:9px">Name</div>'+
+    '<input class="field" id="newName" maxlength="24" placeholder="Work account" value="'+esc(sh.name||'')+'"></div>'+
+  '<div><div class="cap" style="margin-bottom:9px">Colour</div>'+
+    '<div class="row" style="gap:10px;flex-wrap:wrap">'+COLORS.map((x,i)=>
+      '<button class="swatch '+(c===i?'on':'')+'" data-newcolor="'+i+'" style="--sw:'+x.c+'" aria-label="'+x.n+'"></button>').join('')+'</div></div>'+
+  '<div><div class="cap" style="margin-bottom:9px">Session window</div>'+
+    '<div class="grid5">'+[1,3,5,8,12].map(h=>
+      '<button class="opt '+(sh.windowH===h?'on':'')+'" data-newwin="'+h+'">'+h+'h</button>').join('')+'</div>'+
+    '<div class="note" style="margin-top:8px">Used for the working progress bar and as a reference for reset times.</div></div>';
+}
+function createAccount(){
+  const nameEl=$('#newName');
+  const name=(nameEl&&nameEl.value.trim())||('Account '+(db.accounts.length+1));
+  if(db.accounts.length>=8){toast('Maximum of 8 accounts');return}
+  let nid=1;
+  db.accounts.forEach(a=>{if(a.nid>=nid)nid=a.nid+1});
+  db.accounts.push({
+    id:uid('a'),nid:nid,name:name.slice(0,24),
+    color:sh.color==null?db.accounts.length%COLORS.length:sh.color,
+    resetAt:null,startedAt:null,hitAt:null,notified:true,
+    windowH:sh.windowH||db.settings.windowH,alerts:true
   });
-  $('#view').innerHTML=`
-  <div class="row between"><h1>Sessions</h1><button class="btn" data-export><svg class="ic" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Copy CSV</button></div>
-  <div class="card" style="display:flex;flex-direction:column;gap:12px">
-    <div class="cap">Last 7 days, all accounts</div>
-    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
-      <div><div class="stat">${st.n}</div><div class="mu" style="font-size:12px">Sessions</div></div>
-      <div><div class="stat">${st.avg}</div><div class="mu" style="font-size:12px">Avg. worked</div></div>
-      <div><div class="stat">${st.waited}</div><div class="mu" style="font-size:12px">Total waited</div></div>
-    </div>
-    <div class="days" aria-label="Sessions per day">${days.map(d=>`<div><i class="${d.today?'today':''}" style="height:${Math.max(4,d.c/mx*30)}px"></i>${d.n}</div>`).join('')}</div>
-  </div>
-  <div class="fchips">
-    <button class="fchip ${fil==='all'?'on':''}" data-fil="all">All</button>
-    ${S.map((a,i)=>`<button class="fchip ${fil===i?'on':''}" data-fil="${i}">${esc(a.name)}</button>`).join('')}
-  </div>
-  ${groups.length?groups.map(g=>`<section style="display:flex;flex-direction:column;gap:8px"><h2 class="mu" style="font-size:13px;margin-top:4px">${g.t}</h2>
-    ${g.rows.map(s=>{const a=S[s.acc]||{name:'Account '+(s.acc+1)};
-      const span=s.startedAt?fmtT(s.startedAt)+' to '+fmtT(s.hitAt)+', reset '+fmtT(s.resetAt):'Limit at '+fmtT(s.hitAt)+', reset '+fmtT(s.resetAt);
-      return `<div class="srow">${chipHtml(s.acc)}<div class="sp" style="display:flex;flex-direction:column;gap:3px">
-        <div class="row between"><b>${esc(a.name)}</b><span class="ok num" style="font-size:14px;font-weight:600">${s.startedAt?fmtDur(s.hitAt-s.startedAt):'-'}</span></div>
-        <div class="mu" style="font-size:13px">${span}</div>${s.note?`<div style="font-size:13px">${esc(s.note)}</div>`:''}</div>
-        <button class="del" data-del="${s.id}" aria-label="Delete session"><svg class="ic" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`}).join('')}
-  </section>`).join(''):`<div class="empty">No sessions yet.<br>Log a limit and it will show up here.<br>Tap <b>Start session</b> on an account to also track how long you worked.</div>`}`;
+  persist();closeSheet();lastStates='';render();toast('Added '+name);
 }
 
-function permRow(name,state,ok,btn){
-  return `<div class="li"><span class="sp">${name}<span class="sub ${ok===true?'ok':ok===false?'bad':''}">${state}</span></span><button class="btn ${ok===false?'pri':''}" data-perm="${btn}">${ok===false?'Fix':'Open'}</button></div>`;
+/* ---------- account menu sheet ---------- */
+function menuSheetHTML(){
+  const a=db.accounts.find(x=>x.id===sh.accId);
+  if(!a)return '<div class="empty">Account not found.</div>';
+  const s=stateOf(a);
+  return ''+
+  '<div class="sheethead">'+
+    '<div class="row" style="gap:11px">'+chipOf(a)+
+      '<div><div class="cap">Account</div><h2 style="margin-top:2px">'+esc(a.name)+'</h2></div></div>'+
+    '<button class="xbtn" data-closesheet aria-label="Close"><svg class="ic sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'+
+  '</div>'+
+  '<div><div class="cap" style="margin-bottom:9px">Colour</div>'+
+    '<div class="row" style="gap:12px">'+COLORS.map((c,i)=>
+      '<button class="swatch '+(a.color===i?'on':'')+'" data-swatch="'+i+'" style="--sw:'+c.c+'" aria-label="'+c.n+'"></button>').join('')+'</div></div>'+
+  '<div class="list">'+
+    (s!=='work'?'<div class="li tap" data-acct="start" role="button" tabindex="0"><span class="sp t">Start session</span><span class="mu">▶</span></div>':'')+
+    '<div class="li tap" data-acct="limit" role="button" tabindex="0"><span class="sp t">Log a limit</span><span class="mu">'+
+      (a.resetAt?'resets '+fmtT(a.resetAt):'')+'</span></div>'+
+    '<div class="li tap" data-acct="rename" role="button" tabindex="0"><span class="sp t">Rename</span></div>'+
+    '<div class="li tap" data-acct="window" role="button" tabindex="0"><span class="sp t">Session window</span><span class="mu">'+a.windowH+'h</span></div>'+
+    '<div class="li"><div class="sp"><div class="t">Alerts for this account</div>'+
+      '<div class="sub">Turn off to mute without deleting</div></div>'+
+      '<button class="tg '+(a.alerts!==false?'on':'')+'" data-acct-tg="alerts" role="switch" aria-checked="'+(a.alerts!==false)+'"><i></i></button></div>'+
+    (a.resetAt?'<div class="li tap bad" data-acct="clear" role="button" tabindex="0"><span class="sp t">Clear alarm</span></div>':'')+
+    '<div class="li tap bad" data-acct="delete" role="button" tabindex="0"><span class="sp t">Delete account</span></div>'+
+  '</div>';
 }
+
+/* ---------------- views ---------------- */
+function render(){
+  $$('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  if(tab==='acc')renderAcc();
+  else if(tab==='ses')renderSes();
+  else renderSet();
+}
+
+/* ---------- accounts ---------- */
+function heroData(t){
+  const waits=db.accounts.filter(a=>stateOf(a,t)==='wait').sort((x,y)=>x.resetAt-y.resetAt);
+  if(waits.length){
+    const a=waits[0];
+    const W=(a.windowH||db.settings.windowH)*3600e3;
+    const start=a.hitAt||(a.resetAt-W);
+    const tot=Math.max(60e3,a.resetAt-start);
+    return {cap:'Next reset',time:fmtLeft(a.resetAt-t),
+      sub:a.name+' · '+fmtT(a.resetAt),
+      pct:clamp(100-(a.resetAt-t)/tot*100,0,100),col:'var(--wt)'};
+  }
+  const ready=db.accounts.find(a=>stateOf(a,t)==='ready');
+  if(ready)return {cap:'Status',time:'Ready',sub:ready.name+' became free at '+fmtT(ready.resetAt),
+    pct:100,col:'var(--ok)'};
+  const work=db.accounts.find(a=>stateOf(a,t)==='work');
+  if(work)return {cap:'Session running',time:fmtLeft(t-work.startedAt),
+    sub:work.name+' · started '+fmtT(work.startedAt),
+    pct:clamp((t-work.startedAt)/((work.windowH||5)*3600e3)*100,0,100),col:'var(--wk)'};
+  return {cap:'Status',time:'All clear',sub:'No limits logged. Tap + when an account runs out.',pct:0,col:'var(--ln2)'};
+}
+function ringSVG(pct,color){
+  const r=32,c=2*Math.PI*r,off=c*(1-clamp(pct,0,100)/100);
+  return '<svg class="ring" viewBox="0 0 80 80" width="76" height="76" aria-hidden="true">'+
+    '<circle class="ringbg" cx="40" cy="40" r="'+r+'"/>'+
+    '<circle class="ringfg" id="heroRing" cx="40" cy="40" r="'+r+'" stroke="'+color+'" '+
+      'stroke-dasharray="'+c.toFixed(2)+'" stroke-dashoffset="'+off.toFixed(2)+'"/></svg>';
+}
+function renderAcc(){
+  const t=Date.now();
+  const cnt={wait:0,ready:0,work:0,free:0};
+  db.accounts.forEach(a=>cnt[stateOf(a,t)]++);
+  const hero=heroData(t);
+  const pills=[];
+  if(cnt.wait)pills.push('<span class="pill wait">'+cnt.wait+' waiting</span>');
+  if(cnt.ready)pills.push('<span class="pill ready">'+cnt.ready+' ready</span>');
+  if(cnt.work)pills.push('<span class="pill work">'+cnt.work+' working</span>');
+  if(cnt.free)pills.push('<span class="pill">'+cnt.free+' free</span>');
+  lastStates=db.accounts.map(a=>stateOf(a,t)).join(',');
+
+  $('#view').innerHTML=''+
+  '<div class="vhead">'+
+    '<div><div class="mu" style="font-size:12.5px;font-weight:600">'+
+      new Date().toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'})+'</div>'+
+      '<h1 style="margin-top:2px">Limit Bell</h1></div>'+
+    '<button class="fab" data-log="auto" aria-label="Log a limit">'+
+      '<svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>'+
+  '</div>'+
+
+  '<section class="hero card">'+
+    '<div class="row" style="align-items:flex-start;gap:14px">'+
+      '<div class="sp">'+
+        '<div class="cap">'+hero.cap+'</div>'+
+        '<div class="big num" id="heroT" style="margin-top:7px">'+hero.time+'</div>'+
+        '<div class="mu" style="font-size:13px;margin-top:7px" id="heroS">'+esc(hero.sub)+'</div>'+
+      '</div>'+ringSVG(hero.pct,hero.col)+
+    '</div>'+
+    '<div class="bar"><i id="heroB" style="width:'+hero.pct+'%;background:'+hero.col+'"></i></div>'+
+    '<div class="row" style="flex-wrap:wrap;gap:6px;margin-top:13px">'+
+      (pills.length?pills.join(''):'<span class="pill">No accounts yet</span>')+
+    '</div>'+
+  '</section>'+
+
+  '<div class="row between"><h2>Accounts</h2>'+
+    '<button class="btn sm ghost" data-newacc>+ Add</button></div>'+
+
+  (db.accounts.length?db.accounts.length&&sortedAccounts(t).map(a=>accCardHTML(a,t)).join(''):
+    '<div class="card empty">No accounts yet.<br>Add one to start tracking limits.</div>');
+}
+function accCardHTML(a,t){
+  const p=parts(a,t);
+  let quick='';
+  if(p.s==='free'||p.s==='ready')quick='<button class="btn pri sm" data-start="'+a.id+'">Start session</button>';
+  else if(p.s==='work')quick='<button class="btn sm" data-log="'+a.id+'">Hit limit</button>';
+  return '<article class="acc" data-log="'+a.id+'" role="button" tabindex="0" aria-label="'+esc(a.name)+', '+p.pill+'">'+
+    '<div class="row">'+chipOf(a)+
+      '<div class="sp"><div class="nm">'+esc(a.name)+'</div>'+
+        '<div class="sub">'+esc(p.sub)+'</div></div>'+
+      '<span class="pill '+p.s+'">'+p.pill+'</span>'+
+      '<button class="more" data-menu="'+a.id+'" aria-label="Options for '+esc(a.name)+'">'+
+        '<svg class="ic sm" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="12" cy="19" r="1.4"/></svg>'+
+      '</button>'+
+    '</div>'+
+    '<div class="row between" style="margin-top:11px;align-items:flex-end">'+
+      '<div class="big num" data-time="'+a.id+'" style="color:'+p.tc+'">'+p.time+'</div>'+quick+
+    '</div>'+
+    '<div class="bar"><i data-bar="'+a.id+'" style="width:'+p.pct+'%;background:'+p.col+'"></i></div>'+
+  '</article>';
+}
+
+/* ---------- sessions ---------- */
+function renderSes(){
+  $('#view').innerHTML=''+
+  '<div class="vhead"><h1>Sessions</h1>'+
+    '<button class="btn sm ghost" data-csv aria-label="Export CSV">'+
+      '<svg class="ic sm" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>CSV</button></div>'+
+  '<div class="seg2">'+
+    '<button class="'+(sesView==='history'?'on':'')+'" data-seg="history">History</button>'+
+    '<button class="'+(sesView==='insights'?'on':'')+'" data-seg="insights">Insights</button>'+
+  '</div>'+
+  (sesView==='history'?historyHTML():insightsHTML());
+}
+function filteredLogs(){
+  const q=search.trim().toLowerCase();
+  return db.log.filter(l=>{
+    if(fil!=='all'&&l.acc!==fil)return false;
+    if(!q)return true;
+    return (l.note||'').toLowerCase().indexOf(q)>=0||logName(l).toLowerCase().indexOf(q)>=0;
+  }).sort((x,y)=>y.hitAt-x.hitAt);
+}
+function historyHTML(){
+  return '<div class="row" style="gap:8px">'+
+      '<input class="field" id="searchIn" placeholder="Search notes or accounts…" value="'+esc(search)+'" style="min-height:42px">'+
+    '</div>'+
+    '<div class="fchips">'+
+      '<button class="fchip '+(fil==='all'?'on':'')+'" data-fil="all">All</button>'+
+      db.accounts.map(a=>'<button class="fchip '+(fil===a.id?'on':'')+'" data-fil="'+a.id+'">'+esc(a.name)+'</button>').join('')+
+    '</div>'+
+    '<div id="listWrap">'+listHTML()+'</div>';
+}
+function listHTML(){
+  const rows=filteredLogs();
+  if(!rows.length){
+    return '<div class="empty">'+(db.log.length?
+      'Nothing matches this filter.':'No sessions yet.<br>Log a limit and it shows up here.<br>Tap <b>Start session</b> to track worked time too.')+'</div>';
+  }
+  const groups=[];
+  rows.forEach(l=>{
+    const k=dayStart(l.hitAt);
+    let g=groups.find(x=>x.k===k);
+    if(!g){
+      const days=Math.round((dayStart(Date.now())-k)/864e5);
+      g={k:k,label:days===0?'Today':days===1?'Yesterday':
+        new Date(l.hitAt).toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'}),rows:[]};
+      groups.push(g);
+    }
+    g.rows.push(l);
+  });
+  return groups.map(g=>
+    '<div class="dayhead"><span class="cap" style="font-size:10.5px">'+g.label+'</span>'+
+      '<span class="ln"></span><span class="mu" style="font-size:11px">'+g.rows.length+'</span></div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">'+
+    g.rows.map(l=>{
+      const worked=l.startedAt?fmtDur(l.hitAt-l.startedAt):'';
+      const span=l.startedAt
+        ? fmtT(l.startedAt)+' → '+fmtT(l.hitAt)
+        : 'Limit at '+fmtT(l.hitAt);
+      return '<div class="hrow">'+
+        '<span class="chip" style="background:'+logColor(l)+'">'+esc(logName(l).charAt(0).toUpperCase())+'</span>'+
+        '<div class="sp">'+
+          '<div class="row between"><b style="font-size:13.5px">'+esc(logName(l))+'</b>'+
+            (worked?'<span class="ok num" style="font-size:13px;font-weight:700">'+worked+'</span>':'')+'</div>'+
+          '<div class="mu" style="font-size:12.5px;margin-top:2px">'+span+' · reset '+fmtT(l.resetAt)+'</div>'+
+          (l.note?'<div style="font-size:12.5px;margin-top:3px">'+esc(l.note)+'</div>':'')+
+        '</div>'+
+        '<button class="del" data-del="'+l.id+'" aria-label="Delete session">'+
+          '<svg class="ic sm" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'+
+      '</div>';
+    }).join('')+'</div>'
+  ).join('');
+}
+function streakDays(){
+  const set={};
+  db.log.forEach(l=>{set[dayStart(l.hitAt)]=1});
+  let d=dayStart(Date.now()),n=0;
+  if(!set[d])d-=864e5;
+  while(set[d]){n++;d-=864e5}
+  return n;
+}
+function insightsHTML(){
+  const t=Date.now();
+  const from=dayStart(t)-(range-1)*864e5;
+  const rows=db.log.filter(l=>l.hitAt>=from);
+  const worked=rows.filter(l=>l.startedAt).map(l=>l.hitAt-l.startedAt);
+  const avg=worked.length?worked.reduce((a,b)=>a+b,0)/worked.length:0;
+  const longest=worked.length?Math.max.apply(null,worked):0;
+  const waited=rows.reduce((s,l)=>s+Math.max(0,Math.min(l.resetAt,t)-l.hitAt),0);
+
+  const map={};
+  rows.forEach(l=>{const k=dayStart(l.hitAt);map[k]=(map[k]||0)+1});
+  const bars=[];
+  for(let k=0;k<range;k++){
+    const key=from+k*864e5;
+    bars.push({key:key,c:map[key]||0});
+  }
+  const mx=Math.max(1,Math.max.apply(null,bars.map(b=>b.c)));
+
+  const buckets=[0,0,0,0,0,0];
+  rows.forEach(l=>{buckets[Math.min(5,Math.floor(new Date(l.hitAt).getHours()/4))]++});
+  let peak=0;
+  buckets.forEach((v,i)=>{if(v>buckets[peak])peak=i});
+  const bucketLabels=['0–4','4–8','8–12','12–16','16–20','20–24'];
+
+  const perAcc=db.accounts.map(a=>({
+    a:a,n:rows.filter(l=>l.acc===a.id).length
+  })).sort((x,y)=>y.n-x.n);
+  const maxAcc=Math.max(1,perAcc[0]?perAcc[0].n:1);
+
+  const rangeBtn=[7,30,90].map(r=>'<button class="fchip '+(range===r?'on':'')+'" data-range="'+r+'">'+r+'d</button>').join('');
+
+  return ''+
+  '<div class="fchips">'+rangeBtn+'</div>'+
+
+  '<div class="card">'+
+    '<div class="cap">Overview · last '+range+' days</div>'+
+    '<div class="statgrid" style="margin-top:14px">'+
+      '<div><div class="stat">'+rows.length+'</div><div class="sub">Sessions</div></div>'+
+      '<div><div class="stat">'+(worked.length?fmtDur(avg):'—')+'</div><div class="sub">Avg. worked</div></div>'+
+      '<div><div class="stat">'+(rows.length?fmtDur(waited):'—')+'</div><div class="sub">Total waited</div></div>'+
+      '<div><div class="stat">'+(worked.length?fmtDur(longest):'—')+'</div><div class="sub">Longest session</div></div>'+
+    '</div>'+
+  '</div>'+
+
+  '<div class="card">'+
+    '<div class="row between"><div class="cap">Limits per day</div>'+
+      '<div class="mu" style="font-size:12px">peak '+mx+'</div></div>'+
+    '<div class="chart" style="margin-top:14px;gap:'+(range>30?1:range>7?2:4)+'px">'+
+      bars.map((b,i)=>'<div class="cbar '+(i===bars.length-1?'today':'')+'" title="'+fmtD(b.key)+' · '+b.c+'">'+
+        '<i style="height:'+Math.max(3,b.c/mx*100)+'%"></i></div>').join('')+
+    '</div>'+
+    '<div class="row between mu" style="font-size:11px;margin-top:8px">'+
+      '<span>'+fmtD(from)+'</span><span>Today</span></div>'+
+  '</div>'+
+
+  '<div class="card">'+
+    '<div class="cap">When limits hit</div>'+
+    '<div class="chart" style="height:64px;margin-top:14px;gap:8px">'+
+      buckets.map((v,i)=>'<div class="cbar" title="'+bucketLabels[i]+' · '+v+'">'+
+        '<i style="height:'+Math.max(3,v/Math.max(1,Math.max.apply(null,buckets))*100)+'%;background:'+
+        (i===peak&&v?'var(--ac)':'var(--ln2)')+'"></i></div>').join('')+
+    '</div>'+
+    '<div class="row between mu" style="font-size:10.5px;margin-top:6px">'+
+      bucketLabels.map(l=>'<span>'+l.split('–')[0]+'</span>').join('')+'</div>'+
+    '<div class="note" style="margin-top:10px">'+(rows.length?
+      'You hit limits most often between <b>'+bucketLabels[peak]+'</b>.':
+      'Not enough data yet.')+'</div>'+
+  '</div>'+
+
+  '<div class="card">'+
+    '<div class="row between"><div class="cap">By account</div>'+
+      '<div class="mu" style="font-size:12px">'+streakDays()+' day streak</div></div>'+
+    '<div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">'+
+      (perAcc.length?perAcc.map(x=>
+        '<div><div class="row between" style="font-size:13px;margin-bottom:5px">'+
+          '<span style="font-weight:650">'+esc(x.a.name)+'</span>'+
+          '<span class="mu num">'+x.n+' · '+(rows.length?Math.round(x.n/rows.length*100):0)+'%</span></div>'+
+          '<div class="bar" style="margin-top:0;height:7px"><i style="width:'+(x.n/maxAcc*100)+'%;background:'+
+            COLORS[(x.a.color||0)%COLORS.length].c+'"></i></div></div>').join(''):
+        '<div class="note">No accounts yet.</div>')+
+    '</div>'+
+  '</div>';
+}
+
+/* ---------- settings ---------- */
 function renderSet(){
-  const g=v=>v==='granted'?['Allowed',true]:v==null?['Checking...',null]:['Not allowed',false];
-  const [n1,o1]=g(perm.notif),[n2,o2]=g(perm.exact);
-  const bat=perm.bat==null?['Checking...',null]:perm.bat?['Unrestricted',true]:['Restricted: alarms may be late',false];
-  $('#view').innerHTML=`
-  <h1>Settings</h1>
-  <section><div class="cap" style="margin-bottom:8px">Account names</div>
-    <div class="list">${S.map((a,i)=>`<div class="li tap" data-ren="${i}" role="button" tabindex="0" aria-label="Rename ${esc(a.name)}">${chipHtml(i)}<span class="sp" style="font-weight:600">${esc(a.name)}</span><span style="font-size:12px;font-weight:700;color:var(--ac)">Rename</span></div>`).join('')}</div></section>
-  <section><div class="cap" style="margin-bottom:8px">Appearance</div>
-    <div class="card" style="padding:12px 14px"><div class="seg" style="grid-template-columns:repeat(3,1fr)">
-      ${[['dark','Dark'],['light','Light'],['system','System']].map(([k,l])=>`<button class="opt ${ST.theme===k?'on':''}" data-theme="${k}">${l}</button>`).join('')}</div></div></section>
-  <section><div class="cap" style="margin-bottom:8px">Alarm tone</div>
-    <div class="list">${TONES.map(t=>`<div class="li tap" data-tone="${t.id}" role="button" tabindex="0"><span class="tg ${ST.tone===t.id?'on':''}" style="width:24px;height:24px;border-radius:12px"><i style="width:10px;height:10px;border-radius:5px"></i></span><span class="sp">${t.n}</span><button class="btn" data-prev="${t.id}" aria-label="Play ${t.n}">Play</button></div>`).join('')}</div>
-    <div class="note" style="margin-top:6px">Changing the tone re-schedules your active alarms.${native?'':' Tones apply to the Android app.'}</div></section>
-  <section><div class="cap" style="margin-bottom:8px">Alerts</div>
-    <div class="list">
-      <div class="li"><span class="sp">Remind me early<span class="sub">10 minutes before reset</span></span><button class="tg ${ST.early?'on':''}" data-tog="early" aria-label="Remind me early"><i></i></button></div>
-      <div class="li"><span class="sp">Repeat if I miss it<span class="sub">Again 10 minutes after reset</span></span><button class="tg ${ST.repeat?'on':''}" data-tog="repeat" aria-label="Repeat if I miss it"><i></i></button></div>
-    </div></section>
-  <section><div class="cap" style="margin-bottom:8px">Phone permissions</div>
-    <div class="list">
-      ${permRow('Notifications',n1,o1,'notif')}
-      ${permRow('Alarms and reminders',n2,o2,'exact')}
-      ${permRow('Run in background',bat[0],bat[1],'battery')}
-      ${permRow('Autostart','Check on Xiaomi, Oppo, Vivo',null,'autostart')}
-      ${permRow('App info','All app settings',null,'app')}
-    </div>
-    <div class="row" style="flex-wrap:wrap;margin-top:10px"><button class="btn" data-test="5">Test alert (5s)</button><button class="btn" data-test="30">Closed-app test (30s)</button></div>
-    <div class="note" style="margin-top:8px">${native?'Each button opens that page in your phone settings. Alarms scheduled: <b id="pc">...</b>. If alarms do not ring with the app closed, set Battery to Unrestricted and do not force-stop the app.':'These buttons only work in the Android app.'}</div></section>
-  <section><div class="cap" style="margin-bottom:8px">Sessions data</div>
-    <div class="list">
-      <div class="li tap" data-keep role="button" tabindex="0"><span class="sp">Keep session history</span><span class="mu">${ST.keepDays?ST.keepDays+' days':'Forever'}</span></div>
-      <div class="li tap" data-export role="button" tabindex="0"><span class="sp">Copy sessions as CSV</span></div>
-      <div class="li tap bad" data-clear role="button" tabindex="0"><span class="sp">Clear all sessions</span></div>
-    </div></section>
-  <section><div class="cap" style="margin-bottom:8px">Alarms</div>
-    <button class="btn" data-resetall>Clear all running alarms</button></section>
-  <div class="note" style="text-align:center;padding:8px 0 16px">Limit Bell v2.1 (compact + rename fix)</div>`;
-  if(native)pendingCount().then(n=>{const e=$('#pc');if(e)e.textContent=n})
+  const s=db.settings;
+  const g=v=>v==='granted'?['Allowed',true]:v==null?['Checking…',null]:['Not allowed',false];
+  const n1=g(perm.notif)[0],o1=g(perm.notif)[1];
+  const n2=g(perm.exact)[0],o2=g(perm.exact)[1];
+  const bat=perm.bat==null?['Checking…',null]:perm.bat?['Unrestricted',true]:['Restricted — alarms may be late',false];
+  const tg=(key,on,label)=>'<button class="tg '+(on?'on':'')+'" data-tog="'+key+'" role="switch" aria-checked="'+!!on+'" aria-label="'+esc(label)+'"><i></i></button>';
+  const minChips=(attr,cur)=>'<div class="row" style="gap:6px">'+[5,10,15,30].map(m=>
+    '<button class="fchip '+(cur===m?'on':'')+'" data-'+attr+'="'+m+'" style="min-height:28px;padding:0 11px;font-size:11.5px">'+m+'m</button>').join('')+'</div>';
+
+  $('#view').innerHTML=''+
+  '<div class="vhead"><h1>Settings</h1></div>'+
+
+  '<section><div class="cap" style="margin-bottom:9px">Accounts</div>'+
+    '<div class="list">'+
+      db.accounts.map(a=>'<div class="li">'+chipOf(a)+
+        '<div class="sp"><div class="t">'+esc(a.name)+'</div>'+
+        '<div class="sub">'+a.windowH+'h window'+(a.alerts===false?' · alerts off':'')+'</div></div>'+
+        '<button class="btn sm" data-menu="'+a.id+'">Manage</button></div>').join('')+
+      '<div class="li"><button class="btn sm ghost" data-newacc>+ Add account</button></div>'+
+    '</div></section>'+
+
+  '<section><div class="cap" style="margin-bottom:9px">Appearance</div>'+
+    '<div class="card" style="padding:12px">'+
+      '<div class="grid3">'+
+        [['dark','Dark'],['light','Light'],['system','System']].map(x=>
+          '<button class="opt '+(s.theme===x[0]?'on':'')+'" data-theme="'+x[0]+'">'+x[1]+'</button>').join('')+
+      '</div>'+
+      '<div class="cap" style="margin:16px 0 9px">Accent</div>'+
+      '<div class="row" style="gap:12px;flex-wrap:wrap">'+
+        Object.keys(ACCENTS).map(k=>'<button class="swatch '+(s.accent===k?'on':'')+'" data-accent="'+k+'" '+
+          'style="--sw:'+ACCENTS[k].d[0]+'" aria-label="'+ACCENTS[k].n+'"></button>').join('')+
+      '</div>'+
+    '</div></section>'+
+
+  '<section><div class="cap" style="margin-bottom:9px">Alarm tone</div>'+
+    '<div class="list">'+
+      TONES.map(t=>'<div class="li tap" data-tone="'+t.id+'" role="button" tabindex="0">'+
+        '<span class="tg '+(s.tone===t.id?'on':'')+'" style="width:22px;height:22px;padding:0;background:'+
+          (s.tone===t.id?'var(--ac)':'var(--ln)')+'"><i style="width:8px;height:8px;margin:auto;background:'+
+          (s.tone===t.id?'var(--acT)':'var(--tx)')+'"></i></span>'+
+        '<span class="sp t">'+t.n+'</span>'+
+        '<button class="btn sm" data-prev="'+t.id+'">Play</button></div>').join('')+
+    '</div>'+
+    '<div class="note" style="margin-top:8px">Changing the tone re-schedules active alarms.'+
+      (native?'':' Tones apply to the Android build.')+'</div></section>'+
+
+  '<section><div class="cap" style="margin-bottom:9px">Alert behaviour</div>'+
+    '<div class="list">'+
+      '<div class="li"><div class="sp"><div class="t">Early reminder</div>'+
+        '<div class="sub">Heads-up before the reset</div></div>'+tg('early',s.early,'Early reminder')+'</div>'+
+      (s.early?'<div class="li"><span class="sp sub">How early</span>'+minChips('earlymin',s.earlyMin)+'</div>':'')+
+      '<div class="li"><div class="sp"><div class="t">Repeat if missed</div>'+
+        '<div class="sub">Nudge again after the reset</div></div>'+tg('repeat',s.repeat,'Repeat')+'</div>'+
+      (s.repeat?'<div class="li"><span class="sp sub">Remind again after</span>'+minChips('repmin',s.repeatMin)+'</div>':'')+
+      '<div class="li"><div class="sp"><div class="t">Vibration</div>'+
+        '<div class="sub">Buzz with alerts</div></div>'+tg('vib',s.vib,'Vibration')+'</div>'+
+      '<div class="li"><div class="sp"><div class="t">Haptic feedback</div>'+
+        '<div class="sub">Small taps on actions</div></div>'+tg('haptics',s.haptics,'Haptics')+'</div>'+
+      '<div class="li"><div class="sp"><div class="t">In-app banner</div>'+
+        '<div class="sub">Full-screen alert while open</div></div>'+tg('inApp',s.inApp,'In-app banner')+'</div>'+
+    '</div></section>'+
+
+  '<section><div class="cap" style="margin-bottom:9px">Defaults</div>'+
+    '<div class="card" style="padding:13px 14px">'+
+      '<div class="row between"><span style="font-size:13.5px;font-weight:600">Default duration</span>'+
+        '<span class="mu" style="font-size:12.5px">'+s.defaultHours+'h</span></div>'+
+      '<div class="grid5" style="margin-top:10px">'+[1,2,3,4,5].map(h=>
+        '<button class="opt '+(s.defaultHours===h?'on':'')+'" data-dur="'+h+'">'+h+'h</button>').join('')+'</div>'+
+      '<div class="row between" style="margin-top:16px"><span style="font-size:13.5px;font-weight:600">Session window</span>'+
+        '<span class="mu" style="font-size:12.5px">'+s.windowH+'h</span></div>'+
+      '<div class="grid5" style="margin-top:10px">'+[1,3,5,8,12].map(h=>
+        '<button class="opt '+(s.windowH===h?'on':'')+'" data-window="'+h+'">'+h+'h</button>').join('')+'</div>'+
+      '<div class="note" style="margin-top:10px">Session window drives the “working” progress bar.</div>'+
+    '</div></section>'+
+
+  '<section><div class="cap" style="margin-bottom:9px">Data</div>'+
+    '<div class="list">'+
+      '<div class="li tap" data-keep role="button" tabindex="0"><span class="sp t">Keep history</span>'+
+        '<span class="mu">'+(s.keepDays?s.keepDays+' days':'Forever')+'</span></div>'+
+      '<div class="li tap" data-csv role="button" tabindex="0"><span class="sp t">Export CSV</span><span class="mu">Sessions</span></div>'+
+      '<div class="li tap" data-json role="button" tabindex="0"><span class="sp t">Export backup</span><span class="mu">JSON</span></div>'+
+      '<div class="li tap" data-import role="button" tabindex="0"><span class="sp t">Import backup</span><span class="mu">JSON</span></div>'+
+      '<div class="li tap bad" data-clearrole role="button" tabindex="0" data-clear="sessions"><span class="sp t">Clear sessions</span></div>'+
+      '<div class="li tap bad" data-clear="all" role="button" tabindex="0"><span class="sp t">Reset everything</span></div>'+
+    '</div></section>'+
+
+  (native?'<section><div class="cap" style="margin-bottom:9px">Phone permissions</div>'+
+    '<div class="list">'+
+      permRow('Notifications',n1,o1,'notif')+
+      permRow('Alarms and reminders',n2,o2,'exact')+
+      permRow('Run in background',bat[0],bat[1],'battery')+
+      permRow('Autostart','Check on Xiaomi, Oppo, Vivo',null,'autostart')+
+      permRow('App info','All app settings',null,'app')+
+    '</div>'+
+    '<div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap">'+
+      '<button class="btn" data-test="5">Test alert (5s)</button>'+
+      '<button class="btn" data-test="45">Closed-app test (45s)</button>'+
+      '<button class="btn" data-resetall>Clear alarms</button>'+
+    '</div>'+
+    '<div class="note" style="margin-top:9px">Scheduled alarms: <b id="pc">…</b>. '+
+      'If alarms stay silent with the app closed, set Battery to Unrestricted.</div></section>':
+    '<section><div class="note">Notification permissions and background alarms are available in the Android build.</div></section>')+
+
+  '<div class="note center" style="padding:6px 0 18px">Limit Bell v3 · built for Android</div>';
+
+  if(native)pendingCount().then(n=>{const e=$('#pc');if(e)e.textContent=n<0?'—':n});
+}
+function permRow(name,state,ok,key){
+  return '<div class="li"><div class="sp"><div class="t">'+name+'</div>'+
+    '<div class="sub '+(ok===true?'ok':ok===false?'bad':'')+'">'+esc(state)+'</div></div>'+
+    '<button class="btn sm '+(ok===false?'pri':'')+'" data-perm="'+key+'">'+(ok===false?'Fix':'Open')+'</button></div>';
 }
 async function refreshPerm(){
   if(!native)return;
   try{perm.notif=(await LN.checkPermissions()).display}catch(e){}
   try{perm.exact=(await LN.checkExactNotificationSetting()).exact_alarm}catch(e){}
   try{if(SO)perm.bat=(await SO.status()).batteryUnrestricted}catch(e){}
-  if(tab==='set'&&!$('#ren').classList.contains('on')){const y=$('#view').scrollTop;renderSet();$('#view').scrollTop=y}
+  if(tab==='set'&&!sheetOpen&&!modalOpen){
+    const y=$('#view').scrollTop;
+    renderSet();
+    $('#view').scrollTop=y;
+  }
 }
-async function openPhone(t){
-  if(!SO){toast('Works in the Android app only (install the newest APK)');return}
+async function openPhone(target){
+  if(!SO){toast('Available in the Android build only');return}
   try{
-    const r=await SO.open({target:t});
-    if(!r.opened)toast('Could not open settings here. Open them manually.');
-    else if(!r.direct)toast('No direct page on this phone, opening App info');
+    const r=await SO.open({target:target});
+    if(!r.opened)toast('Could not open this page — open it manually.');
+    else if(!r.direct)toast('No direct page here — opened App info.');
   }catch(e){toast('Error: '+(e.message||e))}
 }
 
-/* ================= log sheet ================= */
-function openSheet(i){
-  const now=Date.now();
-  if(i==='auto'){const free=sortedIdx(now).find(k=>['free','ready','work'].includes(stateOf(S[k],now)));i=free==null?0:free}
-  sh={acc:i,h:3,time:'',note:'',early:ST.early,save:true};
-  renderSheet();$('#sheet').classList.add('on');
+/* ---------------- actions ---------------- */
+function startSession(id){
+  const a=db.accounts.find(x=>x.id===id);
+  if(!a)return;
+  a.startedAt=Date.now();
+  a.resetAt=null;a.hitAt=null;a.notified=true;
+  persist();
+  if(native)cancelFor(a);
+  lastStates='';render();
+  toast(a.name+': session started');
+  tap('MEDIUM');
 }
-function closeSheet(){sh=null;$('#sheet').classList.remove('on')}
-function shTarget(){
-  if(sh.time){const [H,M]=sh.time.split(':').map(Number);const t=new Date();t.setHours(H,M,0,0);if(t.getTime()<=Date.now())t.setDate(t.getDate()+1);return t.getTime()}
-  return Date.now()+(sh.h||3)*3600e3;
-}
-function renderSheet(){
-  const a=S[sh.acc],now=Date.now(),s=stateOf(a,now),ms=shTarget();
-  const info=s==='work'?`<div class="note">Worked so far: <b>${fmtDur(now-a.startedAt)}</b></div>`:s==='wait'?`<div class="note">Currently waiting until ${fmtT(a.resetAt)}. Saving updates that reset time.</div>`:'';
-  $('#sheetBody').innerHTML=`
-  <div class="row"><button class="back" data-closesheet aria-label="Back"><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h1 style="font-size:20px">Log a limit</h1></div>
-  <section><h2 class="mu" style="font-size:14px;margin-bottom:10px">Which account hit its limit?</h2>
-    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
-    ${S.map((x,i)=>`<button class="who ${sh.acc===i?'on':''}" data-sacc="${i}">${chipHtml(i)}<span style="max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.name)}</span></button>`).join('')}</div>${info}</section>
-  <section><h2 class="mu" style="font-size:14px;margin-bottom:10px">Resumes in</h2>
-    <div class="seg" style="grid-template-columns:repeat(5,1fr)">${[1,2,3,4,5].map(h=>`<button class="opt ${!sh.time&&sh.h===h?'on':''}" style="min-height:42px;font-size:14px" data-sh="${h}">${h}h</button>`).join('')}</div>
-    <div class="row" style="margin-top:12px"><span class="mu sp" style="font-size:14px">Or pick the exact reset time</span><input class="field" style="width:130px;font-weight:700" type="time" id="shTime" value="${sh.time}" aria-label="Exact reset time"></div></section>
-  <section><h2 class="mu" style="font-size:14px;margin-bottom:10px">What were you working on? <span style="font-weight:400">(optional)</span></h2>
-    <input class="field" id="shNote" maxlength="60" placeholder="Audit notes, FSA revision, CV review" value="${esc(sh.note)}"></section>
-  <section class="list">
-    <div class="li"><span class="sp">Remind me 10 minutes early</span><button class="tg ${sh.early?'on':''}" data-stog="early" aria-label="Remind early"><i></i></button></div>
-    <div class="li"><span class="sp">Save this to Sessions</span><button class="tg ${sh.save?'on':''}" data-stog="save" aria-label="Save to sessions"><i></i></button></div>
-  </section>
-  <section class="prev"><div class="cap" style="margin-bottom:4px">Alert preview</div>
-    <div style="font-size:14px;font-weight:600">${esc(a.name)} is ready at ${fmtT(ms)}</div>
-    <div class="mu" style="font-size:13px;margin-top:2px">In ${fmtDur(ms-now)}.${native?' Phone alarm, works with the app closed.':''}</div></section>`;
-}
-async function saveSheet(){
-  const i=sh.acc,a=S[i],now=Date.now(),ms=shTarget(),s=stateOf(a,now);
-  if(native&&!(await ensureReady()))return;
-  const early=ST.early;ST.early=sh.early;
-  if(sh.save){
-    if(s==='wait'){
-      const last=LOG.filter(x=>x.acc===i).sort((p,q)=>q.hitAt-p.hitAt)[0];
-      if(last){last.resetAt=ms;if(sh.note)last.note=sh.note}
-    }else LOG.push({id:now,acc:i,startedAt:a.startedAt||null,hitAt:now,resetAt:ms,note:sh.note.trim()});
-    saveL();
+function openLog(id){
+  if(!db.accounts.length){openSheet('add',{color:0,windowH:db.settings.windowH});return}
+  let accId=id;
+  if(!accId||accId==='auto'){
+    const list=sortedAccounts();
+    const cand=list.find(a=>['free','ready','work'].indexOf(stateOf(a))>=0)||list[0];
+    accId=cand.id;
   }
-  if(s!=='wait')a.hitAt=now;
-  a.resetAt=ms;a.notified=false;a.startedAt=null;saveS();
-  if(native)await nativeSchedule(a);
-  ST.early=early;
-  closeSheet();render();
-  if(!native)toast(a.name+': alert at '+fmtT(ms));
+  openSheet('log',{
+    accId:accId,hours:db.settings.defaultHours,time:'',note:'',
+    early:db.settings.early,save:true
+  });
 }
-function startSession(i){
-  const a=S[i];a.startedAt=Date.now();a.resetAt=null;a.notified=true;saveS();
-  if(native)nativeCancelAll(a.id);
-  render();toast(a.name+': session started');
+function deleteAccount(id){
+  const a=db.accounts.find(x=>x.id===id);
+  if(!a)return;
+  confirmDialog({
+    title:'Delete '+a.name+'?',
+    msg:'The account is removed. Its session history is kept.',
+    ok:'Delete',danger:true,
+    onOk:()=>{
+      if(native)cancelFor(a);
+      db.accounts=db.accounts.filter(x=>x.id!==id);
+      persist();closeSheet();lastStates='';render();
+      toast('Account deleted');
+    }
+  });
 }
 
-/* ================= events ================= */
-document.addEventListener('click',async e=>{
-  const t=e.target.closest('[data-tab],[data-open],[data-start],[data-fil],[data-del],[data-theme],[data-tone],[data-prev],[data-tog],[data-keep],[data-export],[data-clear],[data-perm],[data-test],[data-resetall],[data-closesheet],[data-sacc],[data-sh],[data-stog],[data-savesheet],[data-ren],[data-rencancel],[data-rensave]');
-  if(!t)return;
-  const d=t.dataset;
-  if(d.ren!==undefined){renIdx=+d.ren;const el=$('#renIn');el.value=S[renIdx].name;$('#ren').classList.add('on');setTimeout(()=>{el.focus();el.select()},60);return}
-  if(d.rencancel!==undefined){$('#ren').classList.remove('on');renIdx=null;return}
-  if(d.rensave!==undefined){saveRename();return}
-  if(d.tab){tab=d.tab;render();if(tab==='set')refreshPerm();return}
-  if(d.start!==undefined){startSession(+d.start);return}
-  if(d.open!==undefined){openSheet(d.open==='auto'?'auto':+d.open);return}
-  if(d.closesheet!==undefined){closeSheet();return}
-  if(d.sacc!==undefined){sh.acc=+d.sacc;renderSheet();return}
-  if(d.sh!==undefined){sh.h=+d.sh;sh.time='';renderSheet();return}
-  if(d.stog){sh[d.stog]=!sh[d.stog];renderSheet();return}
-  if(d.savesheet!==undefined){saveSheet();return}
-  if(d.fil!==undefined){fil=d.fil==='all'?'all':+d.fil;renderSes();return}
-  if(d.del){if(confirm('Delete this session?')){LOG=LOG.filter(s=>String(s.id)!==d.del);saveL();renderSes()}return}
-  if(d.theme){ST.theme=d.theme;saveT();applyTheme();renderSet();return}
-  if(d.prev){playTone(d.prev);return}
-  if(d.tone){ST.tone=d.tone;saveT();renderSet();rescheduleAll();return}
-  if(d.tog){ST[d.tog]=!ST[d.tog];saveT();renderSet();rescheduleAll();return}
-  if(d.keep!==undefined){const o=[30,90,365,0];ST.keepDays=o[(o.indexOf(ST.keepDays)+1)%o.length];saveT();renderSet();return}
-  if(d.export!==undefined){exportCsv();return}
-  if(d.clear!==undefined){if(confirm('Clear all sessions?')){LOG=[];saveL();toast('Sessions cleared')}return}
-  if(d.perm){if(d.perm==='notif'||d.perm==='exact'){if(native&&LN&&perm.notif!=='granted')await ensureReady()}openPhone(d.perm);return}
-  if(d.test){
-    const sec=+d.test;
-    if(!native){inAppAlert('Test alert','This is how a limit reset alert will look.');return}
-    if(!(await ensureReady()))return;
+/* ---------------- export ---------------- */
+function download(name,text,mime){
+  try{
+    const url=URL.createObjectURL(new Blob([text],{type:mime||'text/plain'}));
+    const a=document.createElement('a');
+    a.href=url;a.download=name;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    return true;
+  }catch(e){return false}
+}
+function copyText(text){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text).then(()=>true).catch(()=>false);
+  }
+  return Promise.resolve(false);
+}
+function toCSV(){
+  const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const iso=ms=>ms?new Date(ms).toISOString():'';
+  return ['account,started,limit_hit,reset,worked_minutes,note']
+    .concat(db.log.slice().sort((a,b)=>a.hitAt-b.hitAt).map(l=>[
+      q(logName(l)),iso(l.startedAt),iso(l.hitAt),iso(l.resetAt),
+      l.startedAt?Math.round((l.hitAt-l.startedAt)/60000):'',q(l.note)
+    ].join(','))).join('\n');
+}
+async function exportCsv(){
+  if(!db.log.length){toast('No sessions to export');return}
+  const csv=toCSV();
+  const ok=await copyText(csv);
+  if(ok)toast('CSV copied to clipboard');
+  else if(download('limit-bell-sessions.csv',csv,'text/csv'))toast('CSV downloaded');
+  else toast('Export failed');
+}
+async function exportJSON(){
+  const payload=JSON.stringify(db,null,2);
+  const ok=await copyText(payload);
+  if(ok)toast('Backup copied to clipboard');
+  else if(download('limit-bell-backup.json',payload,'application/json'))toast('Backup downloaded');
+  else toast('Export failed');
+}
+function importJSON(){
+  openModal(
+    '<h2>Import backup</h2>'+
+    '<p class="mu" style="font-size:13px;margin-top:8px">Paste a Limit Bell JSON backup. This replaces current data.</p>'+
+    '<textarea class="field" id="impIn" style="margin-top:14px" placeholder="{ &quot;v&quot;: 3, … }"></textarea>'+
+    '<div class="row" style="justify-content:flex-end;gap:8px;margin-top:16px">'+
+      '<button class="btn" data-mclose>Cancel</button>'+
+      '<button class="btn pri" id="impOk">Import</button></div>'
+  );
+  $('#impOk').onclick=()=>{
+    const raw=$('#impIn').value.trim();
     try{
-      await LN.schedule({notifications:[{id:90+(sec%7),title:'Test alert',body:'This is how a limit reset alert will look.',schedule:{at:new Date(Date.now()+sec*1000),allowWhileIdle:true},channelId:channel()}]});
-      toast(sec===5?'Alert in 5 seconds':'Now close the app and wait 30 seconds');
+      const parsed=JSON.parse(raw);
+      if(!parsed||!Array.isArray(parsed.accounts))throw new Error('Not a Limit Bell backup');
+      parsed.settings=Object.assign({},DEF,parsed.settings||{});
+      parsed.log=Array.isArray(parsed.log)?parsed.log:[];
+      parsed.v=3;
+      db=parsed;
+      persist();applyTheme();closeModal();lastStates='';render();
+      toast('Backup imported');
+    }catch(e){toast('Invalid JSON: '+(e.message||e))}
+  };
+}
+
+/* ---------------- alerts ---------------- */
+function inAppAlert(a){
+  alertAccId=a.id;
+  $('#aTitle').textContent=a.name+' is ready';
+  $('#aBody').textContent='Limit reset at '+fmtT(a.resetAt)+'. Time to get back to work.';
+  $('#alert').classList.add('on');
+  buzz([280,140,280,140,380]);
+  playTone();
+}
+function closeAlert(){$('#alert').classList.remove('on');alertAccId=null}
+$('#aDismiss').addEventListener('click',closeAlert);
+$('#aStart').addEventListener('click',()=>{
+  const a=db.accounts.find(x=>x.id===alertAccId);
+  if(a){a.startedAt=Date.now();a.resetAt=null;a.hitAt=null;a.notified=true;persist();if(native)cancelFor(a)}
+  closeAlert();lastStates='';render();
+  toast(a?a.name+': session started':'Done');
+});
+$('#aSnz').addEventListener('click',()=>{
+  const a=db.accounts.find(x=>x.id===alertAccId);
+  if(a){
+    a.resetAt=Date.now()+5*60e3;a.notified=false;a.hitAt=Date.now();
+    persist();if(native)scheduleFor(a,true);
+    toast('Snoozed for 5 minutes');
+  }
+  closeAlert();lastStates='';render();
+});
+
+/* ---------------- tick ---------------- */
+function tick(){
+  const t=Date.now();
+  let fired=false;
+  db.accounts.forEach(a=>{
+    if(a.resetAt&&!a.notified&&a.resetAt<=t){
+      a.notified=true;fired=true;
+      if(db.settings.inApp)inAppAlert(a);
+      if(native&&LN){const i=idsFor(a);LN.cancel({notifications:[{id:i.rep}]}).catch(()=>{})}
+    }
+  });
+  if(fired){persist();lastStates='';if(tab==='acc'&&!sheetOpen)renderAcc();return}
+
+  if(tab!=='acc'||sheetOpen||modalOpen)return;
+
+  const sig=db.accounts.map(a=>stateOf(a,t)).join(',');
+  if(sig!==lastStates){lastStates=sig;renderAcc();return}
+
+  const hero=heroData(t);
+  const ht=$('#heroT');if(ht)ht.textContent=hero.time;
+  const hs=$('#heroS');if(hs)hs.textContent=hero.sub;
+  const hb=$('#heroB');if(hb)hb.style.width=hero.pct+'%';
+  const hr=$('#heroRing');
+  if(hr){
+    const c=2*Math.PI*32;
+    hr.setAttribute('stroke-dashoffset',(c*(1-clamp(hero.pct,0,100)/100)).toFixed(2));
+  }
+  db.accounts.forEach(a=>{
+    const p=parts(a,t);
+    const el=document.querySelector('[data-time="'+a.id+'"]');
+    if(el)el.textContent=p.time;
+    const bar=document.querySelector('[data-bar="'+a.id+'"]');
+    if(bar)bar.style.width=p.pct+'%';
+  });
+}
+setInterval(tick,1000);
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)return;
+  if(tab==='acc'&&!sheetOpen)renderAcc();
+  if(tab==='set')refreshPerm();
+  tick();
+});
+
+/* ---------------- event delegation ---------------- */
+const SEL=[
+  '[data-tab]','[data-log]','[data-menu]','[data-start]','[data-newacc]',
+  '[data-seg]','[data-fil]','[data-range]','[data-del]',
+  '[data-theme]','[data-accent]','[data-tone]','[data-prev]','[data-tog]',
+  '[data-earlymin]','[data-repmin]','[data-window]','[data-dur]',
+  '[data-sacc]','[data-sh]','[data-stog]','[data-notepick]','[data-save]',
+  '[data-add]','[data-acct]','[data-acct-tg]','[data-swatch]','[data-newcolor]',
+  '[data-newwin]','[data-perm]','[data-test]','[data-keep]','[data-csv]',
+  '[data-json]','[data-import]','[data-clear]','[data-resetall]',
+  '[data-closesheet]','[data-mclose]'
+].join(',');
+
+document.addEventListener('click',async function(e){
+  const el=e.target.closest(SEL);
+  if(!el)return;
+  const d=el.dataset;
+
+  /* closes first */
+  if(d.closesheet!==undefined){closeSheet();return}
+  if(d.mclose!==undefined){closeModal();return}
+
+  /* nav */
+  if(d.tab){
+    if(tab!==d.tab){tab=d.tab;render();$('#view').scrollTop=0}
+    if(tab==='set')refreshPerm();
+    tap('LIGHT');
+    return;
+  }
+
+  /* toast-style interaction feedback */
+  if(d.log!==undefined){openLog(d.log);return}
+  if(d.menu!==undefined){openSheet('acct',{accId:d.menu});return}
+  if(d.start!==undefined){startSession(d.start);return}
+  if(d.newacc!==undefined){
+    if(db.accounts.length>=8){toast('Maximum of 8 accounts');return}
+    openSheet('add',{color:db.accounts.length%COLORS.length,windowH:db.settings.windowH,name:''});
+    return;
+  }
+
+  /* sessions */
+  if(d.seg){sesView=d.seg;renderSes();return}
+  if(d.fil){fil=d.fil==='all'?'all':d.fil;
+    $$('[data-fil]').forEach(b=>b.classList.toggle('on',b.dataset.fil===String(fil)));
+    const w=$('#listWrap');if(w)w.innerHTML=listHTML();return}
+  if(d.range){range=+d.range;renderSes();return}
+  if(d.del){
+    const idx=db.log.findIndex(l=>l.id===d.del);
+    if(idx<0)return;
+    const removed=db.log.splice(idx,1)[0];
+    persist();
+    const w=$('#listWrap');if(w)w.innerHTML=listHTML();else renderSes();
+    toast('Session deleted','Undo',()=>{
+      db.log.push(removed);persist();
+      const ww=$('#listWrap');if(ww)ww.innerHTML=listHTML();else renderSes();
+      toast('Restored');
+    });
+    return;
+  }
+
+  /* sheet: log */
+  if(d.sacc!==undefined){
+    sh.accId=d.sacc;
+    $$('.who').forEach(b=>b.classList.toggle('on',b.dataset.sacc===d.sacc));
+    updatePreview();
+    return;
+  }
+  if(d.sh!==undefined){sh.hours=+d.sh;sh.time='';updatePreview();return}
+  if(d.stog){sh[d.stog]=!sh[d.stog];el.classList.toggle('on',sh[d.stog]);
+    el.setAttribute('aria-checked',String(!!sh[d.stog]));return}
+  if(d.notepick!==undefined){
+    const inp=$('#shNote');
+    if(inp){inp.value=d.notepick;sh.note=d.notepick}
+    return;
+  }
+  if(d.save!==undefined){saveLog();return}
+
+  /* sheet: add */
+  if(d.newcolor!==undefined){sh.color=+d.newcolor;
+    $$('[data-newcolor]').forEach(b=>b.classList.toggle('on',+b.dataset.newcolor===sh.color));return}
+  if(d.newwin!==undefined){sh.windowH=+d.newwin;
+    $$('[data-newwin]').forEach(b=>b.classList.toggle('on',+b.dataset.newwin===sh.windowH));return}
+  if(d.add!==undefined){createAccount();return}
+
+  /* sheet: account menu */
+  if(d.swatch!==undefined){
+    const a=db.accounts.find(x=>x.id===sh.accId);
+    if(a){a.color=+d.swatch;persist();
+      $$('[data-swatch]').forEach(b=>b.classList.toggle('on',+b.dataset.swatch===a.color));
+      lastStates='';}
+    return;
+  }
+  if(d.acctTg!==undefined){
+    const a=db.accounts.find(x=>x.id===sh.accId);
+    if(a){
+      a.alerts=a.alerts===false;
+      persist();
+      el.classList.toggle('on',a.alerts!==false);
+      el.setAttribute('aria-checked',String(a.alerts!==false));
+      if(native){if(a.alerts===false)cancelFor(a);else scheduleFor(a,true)}
+    }
+    return;
+  }
+  if(d.acct){
+    const a=db.accounts.find(x=>x.id===sh.accId);
+    if(!a)return;
+    if(d.acct==='start'){closeSheet();startSession(a.id);return}
+    if(d.acct==='limit'){closeSheet();setTimeout(()=>openLog(a.id),180);return}
+    if(d.acct==='rename'){
+      closeSheet();
+      setTimeout(()=>promptDialog({
+        title:'Rename account',label:'Name',value:a.name,maxlength:24,ok:'Save',
+        onOk:v=>{
+          a.name=(v||('Account '+(db.accounts.indexOf(a)+1))).slice(0,24);
+          persist();
+          if(native&&a.resetAt)scheduleFor(a,true);
+          lastStates='';render();toast('Renamed to '+a.name);
+        }
+      }),200);
+      return;
+    }
+    if(d.acct==='window'){
+      const opts=[1,3,5,8,12];
+      openModal('<h2>Session window</h2>'+
+        '<p class="mu" style="font-size:13px;margin-top:8px">Used for the working progress bar.</p>'+
+        '<div class="grid5" style="margin-top:16px">'+opts.map(h=>
+          '<button class="opt '+(a.windowH===h?'on':'')+'" data-wh="'+h+'">'+h+'h</button>').join('')+'</div>'+
+        '<div class="row" style="justify-content:flex-end;margin-top:18px">'+
+          '<button class="btn" data-mclose>Close</button></div>');
+      $('#modalCard').addEventListener('click',function(ev){
+        const b=ev.target.closest('[data-wh]');
+        if(!b)return;
+        a.windowH=+b.dataset.wh;persist();
+        $$('[data-wh]').forEach(x=>x.classList.toggle('on',+x.dataset.wh===a.windowH));
+      });
+      return;
+    }
+    if(d.acct==='clear'){
+      confirmDialog({
+        title:'Clear alarm?',msg:'The countdown for '+a.name+' will be removed.',
+        ok:'Clear',danger:true,
+        onOk:()=>{
+          if(native)cancelFor(a);
+          a.resetAt=null;a.hitAt=null;a.startedAt=null;a.notified=true;
+          persist();closeSheet();lastStates='';render();toast('Alarm cleared');
+        }
+      });
+      return;
+    }
+    if(d.acct==='delete'){deleteAccount(a.id);return}
+  }
+
+  /* settings */
+  if(d.theme){db.settings.theme=d.theme;persist();applyTheme();renderSet();return}
+  if(d.accent){db.settings.accent=d.accent;persist();applyTheme();renderSet();return}
+  if(d.tone){db.settings.tone=d.tone;persist();renderSet();rescheduleAll();return}
+  if(d.prev){playTone(d.prev);return}
+  if(d.tog){
+    db.settings[d.tog]=!db.settings[d.tog];persist();
+    if(d.tog==='early'||d.tog==='repeat')rescheduleAll();
+    renderSet();return;
+  }
+  if(d.earlymin!==undefined){db.settings.earlyMin=+d.earlymin;persist();renderSet();rescheduleAll();return}
+  if(d.repmin!==undefined){db.settings.repeatMin=+d.repmin;persist();renderSet();rescheduleAll();return}
+  if(d.window!==undefined){db.settings.windowH=+d.window;persist();renderSet();return}
+  if(d.dur!==undefined){db.settings.defaultHours=+d.dur;persist();renderSet();return}
+  if(d.keep!==undefined){
+    const opts=[30,90,365,0];
+    const i=opts.indexOf(db.settings.keepDays);
+    db.settings.keepDays=opts[(i+1)%opts.length];
+    persist();pruneLog();persist();renderSet();
+    toast('History kept '+(db.settings.keepDays?db.settings.keepDays+' days':'forever'));
+    return;
+  }
+  if(d.csv!==undefined){exportCsv();return}
+  if(d.json!==undefined){exportJSON();return}
+  if(d.import!==undefined){importJSON();return}
+  if(d.clear){
+    if(d.clear==='sessions'){
+      confirmDialog({title:'Clear sessions?',msg:'All history entries will be deleted.',
+        ok:'Clear',danger:true,onOk:()=>{db.log=[];persist();renderSet();toast('Sessions cleared')}});
+    }else{
+      confirmDialog({title:'Reset everything?',msg:'Accounts, alarms and history will be erased.',
+        ok:'Reset',danger:true,onOk:()=>{
+          localStorage.removeItem(DBKEY);
+          db=migrate();persist();applyTheme();lastStates='';render();toast('Reset complete');
+        }});
+    }
+    return;
+  }
+  if(d.perm){
+    if((d.perm==='notif'||d.perm==='exact')&&LN&&perm.notif!=='granted'){
+      if(!(await ensureReady()))return;
+    }
+    openPhone(d.perm);
+    return;
+  }
+  if(d.test!==undefined){
+    const sec=+d.test;
+    if(!native){
+      inAppAlert({id:'demo',name:'Demo account',resetAt:Date.now()});
+      return;
+    }
+    if(!(await ensureReady()))return;
+    const i=idsFor({nid:1});
+    try{
+      await LN.schedule({notifications:[{id:i.rep,title:'Test alert',
+        body:'This is how a limit reset alert looks.',
+        schedule:{at:new Date(Date.now()+sec*1000),allowWhileIdle:true},
+        channelId:channel()}]});
+      toast(sec<=10?'Alert in '+sec+' seconds':'Close the app and wait '+sec+' seconds');
     }catch(err){toast('Error: '+(err.message||err))}
     return;
   }
-  if(d.resetall!==undefined){if(confirm('Cancel all running alarms?')){S.forEach(a=>{a.resetAt=null;a.notified=true;a.startedAt=null;nativeCancelAll(a.id)});saveS();toast('Alarms cleared')}return}
+  if(d.resetall!==undefined){
+    confirmDialog({title:'Clear all alarms?',msg:'All running countdowns will be removed.',
+      ok:'Clear',danger:true,onOk:()=>{
+        db.accounts.forEach(a=>{
+          if(native)cancelFor(a);
+          a.resetAt=null;a.hitAt=null;a.startedAt=null;a.notified=true;
+        });
+        persist();lastStates='';render();toast('Alarms cleared');
+      }});
+    return;
+  }
 });
-document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[role=button]')){e.preventDefault();e.target.click()}});
-function saveRename(){
-  if(renIdx==null)return;
-  const i=renIdx,v=$('#renIn').value.trim();
-  S[i].name=v||('Account '+(i+1));saveS();
-  $('#ren').classList.remove('on');renIdx=null;
-  if(native&&S[i].resetAt&&S[i].resetAt>Date.now())nativeSchedule(S[i],true);
-  render();toast('Renamed to '+S[i].name);
-}
-document.addEventListener('keydown',e=>{if(e.target.id==='renIn'&&e.key==='Enter'){e.preventDefault();saveRename()}});
+
+/* keyboard activation for role=button */
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[role=button]')){
+    e.preventDefault();e.target.click();
+  }
+  if(e.key==='Escape'){
+    if($('#alert').classList.contains('on'))closeAlert();
+    else if(modalOpen)closeModal();
+    else if(sheetOpen)closeSheet();
+  }
+});
+
+/* live inputs */
 document.addEventListener('input',e=>{
   if(e.target.id==='shNote'&&sh)sh.note=e.target.value;
+  if(e.target.id==='newName'&&sh)sh.name=e.target.value;
+  if(e.target.id==='searchIn'){
+    search=e.target.value;
+    const w=$('#listWrap');
+    if(w)w.innerHTML=listHTML();
+  }
 });
 document.addEventListener('change',e=>{
-  if(e.target.id==='shTime'&&sh){sh.time=e.target.value;renderSheet();return}
+  if(e.target.id==='shTime'&&sh){sh.time=e.target.value;updatePreview()}
 });
 
-function exportCsv(){
-  if(!LOG.length){toast('No sessions to export');return}
-  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-  const iso=ms=>ms?new Date(ms).toISOString():'';
-  const csv=['account,started,limit_hit,reset,worked_minutes,note'].concat(LOG.slice().sort((a,b)=>a.hitAt-b.hitAt).map(s=>[q((S[s.acc]||{}).name||'Account '+(s.acc+1)),iso(s.startedAt),iso(s.hitAt),iso(s.resetAt),s.startedAt?Math.round((s.hitAt-s.startedAt)/60000):'',q(s.note)].join(','))).join('\n');
-  const done=()=>toast('CSV copied. Paste it into a note or sheet.');
-  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(csv).then(done).catch(()=>fallbackDownload(csv));
-  else fallbackDownload(csv);
-}
-function fallbackDownload(csv){
-  try{const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));const l=document.createElement('a');l.href=url;l.download='limit-bell-sessions.csv';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(url),4000)}catch(e){toast('Export failed')}
-}
+/* scrim / modal taps */
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+$('#scrim').addEventListener('click',closeSheet);
 
-/* ================= clock ================= */
-function tick(){
-  const now=Date.now();let changed=false;
-  S.forEach((a,i)=>{
-    if(a.resetAt&&!a.notified&&a.resetAt<=now){
-      a.notified=true;changed=true;saveS();
-      inAppAlert(a.name+' is ready','Limit reset. Time to get back to work.');
-      if(native&&LN)LN.cancel({notifications:[{id:200+a.id}]}).catch(()=>{});
-    }
-  });
-  if(changed&&tab==='acc'&&!sh){renderAcc();return}
-  if(tab==='acc'&&!sh){
-    const h=heroInfo(now);const ht=$('#heroT'),hs=$('#heroS');
-    if(ht)ht.textContent=h.t;if(hs)hs.textContent=h.s;
-    S.forEach((a,i)=>{
-      const el=document.querySelector('[data-t="'+i+'"]');if(!el)return;
-      const p=cardParts(a,now);
-      if(p.s==='wait'||p.s==='work'){el.textContent=p.time;const b=document.querySelector('[data-b="'+i+'"]');if(b)b.style.width=p.pct+'%'}
+/* hardware back (Capacitor App plugin) */
+if(APP&&APP.addListener){
+  try{
+    APP.addListener('backButton',()=>{
+      if($('#alert').classList.contains('on'))return closeAlert();
+      if(modalOpen)return closeModal();
+      if(sheetOpen)return closeSheet();
     });
-  }
+  }catch(e){}
 }
-setInterval(tick,1000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(tab==='acc'&&!sh)renderAcc();else if(tab==='set')refreshPerm();tick()}});
 
-(async()=>{
-  applyTheme();render();
-  if(native){await nativeInit();rescheduleAll();refreshPerm()}
+/* ---------------- boot ---------------- */
+(async function boot(){
+  applyTheme();
+  render();
+  if(native){
+    await nativeInit();
+    rescheduleAll();
+    refreshPerm();
+  }
   tick();
 })();
 </script>
